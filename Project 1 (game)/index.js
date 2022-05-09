@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 2;
+let players = 8;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -72,6 +72,32 @@ const setup = () => {
   return playerCardsObj;
 };
 playerCardsObj = setup();
+
+// const cardManipulate = () => {
+//   playerCardsObj["Community Cards"] = ["2 ♢", "J ♢", "9 ♢", "Q ♢", "A ♢"];
+//   // playerCardsObj["Player 1"].statements = ["flush"];
+//   playerCardsObj["Player 1"] = [
+//     "10 ♡",
+//     "3 ♡",
+//     "2 ♢",
+//     "J ♢",
+//     "9 ♢",
+//     "Q ♢",
+//     "A ♢",
+//   ];
+//   // playerCardsObj["Player 2"].statements = ["flush"];
+//   playerCardsObj["Player 2"] = [
+//     "6 ♠",
+//     "8 ♠",
+//     "2 ♢",
+//     "J ♢",
+//     "9 ♢",
+//     "Q ♢",
+//     "A ♢",
+//   ];
+// };
+// cardManipulate();
+
 const arrNum = {};
 const arrSuits = {};
 const cardObj = { Num: arrNum, Suits: arrSuits };
@@ -90,88 +116,6 @@ for (const [key, value] of Object.entries(playerCardsObj)) {
     arrNum[key].push(card.split(" ")[0]);
     arrSuits[key].push(card.split(" ")[1]);
   }
-}
-
-const pushFlush = (key) => {
-  const flushArr = [];
-  for (let i in cardObj.Suits[key]) {
-    if (cardObj.Suits[key][i] === playerCardsObj[key].isFlush[1]) {
-      flushArr.push(cardObj.Num[key][i]);
-    }
-  }
-  playerCardsObj[key].isFlush.push(flushArr.sort());
-};
-
-for (const [key, value] of Object.entries(cardObj.Suits)) {
-  if (key !== "Community Cards") {
-    //check if there's a flush and update playerCardsObj
-    let countDiamond = 0;
-    let countClub = 0;
-    let countHeart = 0;
-    let countSpade = 0;
-    playerCardsObj[key].isFlush = [false];
-
-    for (let i in cardObj.Suits[key]) {
-      switch (cardObj.Suits[key][i]) {
-        case "♢":
-          countDiamond++;
-          if (countDiamond >= 5) {
-            playerCardsObj[key].isFlush = [true];
-            playerCardsObj[key].isFlush[1] = "♢";
-          }
-          break;
-        case "♣":
-          countClub++;
-          if (countClub >= 5) {
-            playerCardsObj[key].isFlush = [true];
-            playerCardsObj[key].isFlush[1] = "♣";
-          }
-          break;
-        case "♡":
-          countHeart++;
-          if (countHeart >= 5) {
-            playerCardsObj[key].isFlush = [true];
-            playerCardsObj[key].isFlush[1] = "♡";
-          }
-          break;
-        case "♠":
-          countSpade++;
-          if (countSpade >= 5) {
-            playerCardsObj[key].isFlush = [true];
-            playerCardsObj[key].isFlush[1] = "♠";
-          }
-          break;
-      }
-    }
-
-    if (playerCardsObj[key].isFlush[0]) {
-      pushFlush(key);
-      // console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
-    }
-  }
-}
-
-for (const [key, value] of Object.entries(cardObj.Num)) {
-  //check if there's a straight and update playerCardsObj
-  playerCardsObj[key].isStraight = [false];
-
-  for (let Arr of straightArr) {
-    let counter = 0;
-    for (let num of Arr) {
-      if (cardObj.Num[key].includes(num)) {
-        counter++;
-        if (counter === 5) {
-          playerCardsObj[key].isStraight[0] = true;
-          playerCardsObj[key].isStraight[1] = num;
-        }
-      }
-    }
-  }
-  // if (playerCardsObj[key].isStraight[0]) {
-  // console.log(
-  //   `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
-  // );
-  // }
 }
 
 for (const [key, value] of Object.entries(cardObj.Num)) {
@@ -203,6 +147,122 @@ for (const [key, value] of Object.entries(cardObj.Num)) {
     }
     // console.log(playerCardsObj[key]["combi of nums"]);
   }
+}
+
+const checkFlush = () => {
+  const pushFlush = (key) => {
+    const flushArr = [];
+    for (let i in cardObj.Suits[key]) {
+      let value = 0;
+      if (cardObj.Suits[key][i] === playerCardsObj[key].isFlush[1]) {
+        if (
+          cardObj.Num[key][i] === "J" ||
+          cardObj.Num[key][i] === "Q" ||
+          cardObj.Num[key][i] === "K" ||
+          cardObj.Num[key][i] === "A"
+        ) {
+          switch (cardObj.Num[key][i]) {
+            case "J":
+              value = "11";
+              break;
+            case "Q":
+              value = "12";
+              break;
+            case "K":
+              value = "13";
+              break;
+            case "A":
+              value = "14";
+              break;
+          }
+        } else {
+          value = cardObj.Num[key][i];
+        }
+
+        flushArr.push(parseInt(value));
+      }
+    }
+    flushArr.sort((a, b) => a - b);
+    if (flushArr.length == 6) {
+      flushArr.splice(0, 1);
+    } else if (flushArr.length == 7) {
+      flushArr.splice(0, 2);
+    }
+    playerCardsObj[key].isFlush.push(flushArr);
+  };
+
+  for (const [key, value] of Object.entries(cardObj.Suits)) {
+    if (key !== "Community Cards") {
+      //check if there's a flush and update playerCardsObj
+      let countDiamond = 0;
+      let countClub = 0;
+      let countHeart = 0;
+      let countSpade = 0;
+      playerCardsObj[key].isFlush = [false];
+
+      for (let i in cardObj.Suits[key]) {
+        switch (cardObj.Suits[key][i]) {
+          case "♢":
+            countDiamond++;
+            if (countDiamond >= 5) {
+              playerCardsObj[key].isFlush = [true];
+              playerCardsObj[key].isFlush[1] = "♢";
+            }
+            break;
+          case "♣":
+            countClub++;
+            if (countClub >= 5) {
+              playerCardsObj[key].isFlush = [true];
+              playerCardsObj[key].isFlush[1] = "♣";
+            }
+            break;
+          case "♡":
+            countHeart++;
+            if (countHeart >= 5) {
+              playerCardsObj[key].isFlush = [true];
+              playerCardsObj[key].isFlush[1] = "♡";
+            }
+            break;
+          case "♠":
+            countSpade++;
+            if (countSpade >= 5) {
+              playerCardsObj[key].isFlush = [true];
+              playerCardsObj[key].isFlush[1] = "♠";
+            }
+            break;
+        }
+      }
+
+      if (playerCardsObj[key].isFlush[0]) {
+        pushFlush(key);
+        // console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
+      }
+    }
+  }
+};
+checkFlush();
+
+for (const [key, value] of Object.entries(cardObj.Num)) {
+  //check if there's a straight and update playerCardsObj
+  playerCardsObj[key].isStraight = [false];
+
+  for (let Arr of straightArr) {
+    let counter = 0;
+    for (let num of Arr) {
+      if (cardObj.Num[key].includes(num)) {
+        counter++;
+        if (counter === 5) {
+          playerCardsObj[key].isStraight[0] = true;
+          playerCardsObj[key].isStraight[1] = num;
+        }
+      }
+    }
+  }
+  // if (playerCardsObj[key].isStraight[0]) {
+  // console.log(
+  //   `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
+  // );
+  // }
 }
 
 const pairTripsQuads = () => {
@@ -266,14 +326,6 @@ const cardRanking = {
   quads: 8,
   straightflush: 9,
 };
-
-const cardManipulate = () => {
-  playerCardsObj["Player 1"].statements = ["fullHouse"];
-  playerCardsObj["Player 1"].sortedHand = { 4: 3, 7: 2, 9: 1, 13: 1 };
-  playerCardsObj["Player 2"].statements = ["fullHouse"];
-  playerCardsObj["Player 2"].sortedHand = { 4: 3, 7: 2, 9: 1, 10: 1 };
-};
-cardManipulate();
 
 let mostPower = 0;
 let mostPowerKey = 0;
@@ -371,10 +423,38 @@ function straightDecon() {
   }
 }
 function flushDecon() {
-  for (let key of conflictInfo) {
-    console.log(key);
+  const flushArrCompare = [];
+  let winner = "undecided";
+  for (let i = 4; i >= 0; i--) {
+    for (let j = 0; j < conflictInfo.length; j++) {
+      flushArrCompare[j] = playerCardsObj[conflictInfo[j]].isFlush[2][i];
+    }
+    var maxNum = [0, -1];
+    for (let j = 0; j < flushArrCompare.length; j++) {
+      for (let n = j + 1; n < flushArrCompare.length; n++) {
+        if (flushArrCompare[j] !== flushArrCompare[n]) {
+          if (flushArrCompare[j] > maxNum[0]) {
+            maxNum[0] = flushArrCompare[j];
+            maxNum[1] = j;
+          }
+        }
+      }
+    }
+    if (maxNum[1] !== -1) {
+      winner = conflictInfo[maxNum[1]];
+      break;
+    }
   }
+
+  if (winner === "undecided") {
+    winner = "draw";
+    console.log(`Its a draw`);
+  } else {
+    console.log(`Winner is ${winner}`);
+  }
+  return winner;
 }
+
 function fullHouseDecon() {
   const fullHouseObj1 = {};
   const fullHouseObj2 = {};
