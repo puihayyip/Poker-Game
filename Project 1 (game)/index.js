@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 2;
+let players = 8;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -72,16 +72,17 @@ const setup = () => {
   return playerCardsObj;
 };
 playerCardsObj = setup();
-
 const arrNum = {};
 const arrSuits = {};
 const cardObj = { Num: arrNum, Suits: arrSuits };
 for (const [key, value] of Object.entries(playerCardsObj)) {
   //splitting cards to compare
-  if (key !== "Community Cards") {
-    console.log(`${key}: ${value.slice(0, 2)}`);
+  if (key === "Community Cards") {
+    // console.log(`${key}: ${value}`);
+    $("div").append($("<h3>").text(`${key}: ${value}`));
   } else {
-    console.log(`${key}: ${value}`);
+    // console.log(`${key}: ${value.slice(0, 2)}`);
+    $("div").append($("<h3>").text(`${key}: ${value.slice(0, 2)}`));
   }
   arrNum[key] = [];
   arrSuits[key] = [];
@@ -91,48 +92,62 @@ for (const [key, value] of Object.entries(playerCardsObj)) {
   }
 }
 
-for (const [key, value] of Object.entries(cardObj.Suits)) {
-  //check if there's a flush and update playerCardsObj
-  let countDiamond = 0;
-  let countClub = 0;
-  let countHeart = 0;
-  let countSpade = 0;
-  playerCardsObj[key].isFlush = [false];
+const pushFlush = (key) => {
+  const flushArr = [];
   for (let i in cardObj.Suits[key]) {
-    switch (cardObj.Suits[key][i]) {
-      case "♢":
-        countDiamond++;
-        if (countDiamond >= 5) {
-          playerCardsObj[key].isFlush = [true];
-          playerCardsObj[key].isFlush[1] = ["♢"];
-        }
-        break;
-      case "♣":
-        countClub++;
-        if (countClub >= 5) {
-          playerCardsObj[key].isFlush = [true];
-          playerCardsObj[key].isFlush[1] = ["♣"];
-        }
-        break;
-      case "♡":
-        countHeart++;
-        if (countHeart >= 5) {
-          playerCardsObj[key].isFlush = [true];
-          playerCardsObj[key].isFlush[1] = ["♡"];
-        }
-        break;
-      case "♠":
-        countSpade++;
-        if (countSpade >= 5) {
-          playerCardsObj[key].isFlush = [true];
-          playerCardsObj[key].isFlush[1] = ["♠"];
-        }
-        break;
+    if (cardObj.Suits[key][i] === playerCardsObj[key].isFlush[1]) {
+      flushArr.push(cardObj.Num[key][i]);
     }
   }
+  playerCardsObj[key].isFlush.push(flushArr.sort());
+};
 
-  if (playerCardsObj[key].isFlush[0]) {
-    console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
+for (const [key, value] of Object.entries(cardObj.Suits)) {
+  if (key !== "Community Cards") {
+    //check if there's a flush and update playerCardsObj
+    let countDiamond = 0;
+    let countClub = 0;
+    let countHeart = 0;
+    let countSpade = 0;
+    playerCardsObj[key].isFlush = [false];
+
+    for (let i in cardObj.Suits[key]) {
+      switch (cardObj.Suits[key][i]) {
+        case "♢":
+          countDiamond++;
+          if (countDiamond >= 5) {
+            playerCardsObj[key].isFlush = [true];
+            playerCardsObj[key].isFlush[1] = "♢";
+          }
+          break;
+        case "♣":
+          countClub++;
+          if (countClub >= 5) {
+            playerCardsObj[key].isFlush = [true];
+            playerCardsObj[key].isFlush[1] = "♣";
+          }
+          break;
+        case "♡":
+          countHeart++;
+          if (countHeart >= 5) {
+            playerCardsObj[key].isFlush = [true];
+            playerCardsObj[key].isFlush[1] = "♡";
+          }
+          break;
+        case "♠":
+          countSpade++;
+          if (countSpade >= 5) {
+            playerCardsObj[key].isFlush = [true];
+            playerCardsObj[key].isFlush[1] = "♠";
+          }
+          break;
+      }
+    }
+
+    if (playerCardsObj[key].isFlush[0]) {
+      pushFlush(key);
+      // console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
+    }
   }
 }
 
@@ -146,17 +161,17 @@ for (const [key, value] of Object.entries(cardObj.Num)) {
       if (cardObj.Num[key].includes(num)) {
         counter++;
         if (counter === 5) {
-          playerCardsObj[key].isStraight = [true];
+          playerCardsObj[key].isStraight[0] = true;
           playerCardsObj[key].isStraight[1] = num;
         }
       }
     }
   }
-  if (playerCardsObj[key].isStraight[0]) {
-    console.log(
-      `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
-    );
-  }
+  // if (playerCardsObj[key].isStraight[0]) {
+  // console.log(
+  //   `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
+  // );
+  // }
 }
 
 for (const [key, value] of Object.entries(cardObj.Num)) {
@@ -175,13 +190,13 @@ for (const [key, value] of Object.entries(cardObj.Num)) {
         playerCardsObj[key].cardCombinations[cardObj.Num[key][i]] += 1;
       }
     }
-    playerCardsObj[key].customObj = {}; //update combi of cards of player with respect to strength in customObj
+    playerCardsObj[key].sortedHand = {}; //update combi of cards of player with respect to strength in sortedHand
     for (const [key2, value] of Object.entries(
       playerCardsObj[key].cardCombinations
     )) {
       for (let i = 0; i < cardValue.length; i++) {
         if (key2 === cardValue[i]) {
-          playerCardsObj[key].customObj[i + 2] =
+          playerCardsObj[key].sortedHand[i + 2] =
             playerCardsObj[key].cardCombinations[key2];
         }
       }
@@ -192,56 +207,133 @@ for (const [key, value] of Object.entries(cardObj.Num)) {
 
 const pairTripsQuads = () => {
   for (const [key, value] of Object.entries(playerCardsObj)) {
-    playerCardsObj[key].statements = [];
-
-    for (const [key1, value1] of Object.entries(
-      playerCardsObj[key].customObj
-    )) {
+    if (key !== "Community Cards") {
+      playerCardsObj[key].statements = [];
       // console.log(key, value);
-      switch (value1) {
-        case 2:
-          playerCardsObj[key].statements.push("1 pair");
-          break;
-        case 3:
-          playerCardsObj[key].statements.push("1 triplet");
-          break;
-        case 4:
-          playerCardsObj[key].statements.push("1 quad");
-          break;
-      }
-    }
 
-    const dir = playerCardsObj[key].statements;
-    let check = false;
-    const checkDups = () => {
-      let counter = 0;
-      for (const i in dir) {
-        if (dir[i] === "1 pair") {
-          counter++;
+      for (const [key1, value1] of Object.entries(
+        playerCardsObj[key].sortedHand
+      )) {
+        // console.log(key1, value1);
+        switch (value1) {
+          case 2:
+            playerCardsObj[key].statements.push("onePair");
+            break;
+          case 3:
+            playerCardsObj[key].statements.push("trips");
+            break;
+          case 4:
+            playerCardsObj[key].statements.push("quads");
+            break;
         }
       }
-      if (counter >= 2) {
-        check = true;
-        return check;
+
+      const dir = playerCardsObj[key].statements;
+      let check = false;
+      const checkDups = () => {
+        let counter = 0;
+        for (const i in dir) {
+          if (dir[i] === "onePair") {
+            counter++;
+          }
+        }
+        if (counter >= 2) {
+          playerCardsObj[key].statements.push("dups");
+
+          check = true;
+          return check;
+        }
+      };
+      checkDups();
+
+      if (dir.includes("trips") && dir.includes("onePair")) {
+        playerCardsObj[key].statements.push("fullHouse");
       }
-    };
-    checkDups();
-    if (dir.includes("1 quad")) {
-      console.log(`${key} have quads`);
-    } else if (dir.includes("1 triplet") && dir.includes("1 pair")) {
-      console.log(`${key} have full house`);
-    } else if (dir.includes("1 triplet")) {
-      console.log(`${key} have trips`);
-    } else if (check) {
-      console.log(`${key} has dups`);
-    } else if (dir.includes("1 pair")) {
-      console.log(`${key} only got a pair`);
-    } else {
-      console.log(`${key} has high card only, lame`);
     }
   }
 };
 
 pairTripsQuads();
+
+const cardRanking = {
+  highCard: 1,
+  onePair: 2,
+  dups: 3,
+  trips: 4,
+  straight: 5,
+  flush: 6,
+  fullHouse: 7,
+  quads: 8,
+  straightflush: 9,
+};
+
+let mostPower = 0;
+let mostPowerkey = 0;
+for (let [key, value] of Object.entries(playerCardsObj)) {
+  //final hand of player
+  if (key !== "Community Cards") {
+    if (playerCardsObj[key].statements.includes("quads")) {
+      playerCardsObj[key].hand = "quads";
+      playerCardsObj[key].power = cardRanking.quads;
+      console.log(`${key} have quads`);
+    } else if (playerCardsObj[key].statements.includes("fullHouse")) {
+      playerCardsObj[key].hand = "fullHouse";
+      playerCardsObj[key].power = cardRanking.fullHouse;
+      console.log(`${key} have full house`);
+    } else if (playerCardsObj[key].isFlush[0]) {
+      playerCardsObj[key].hand = "flush";
+      playerCardsObj[key].power = cardRanking.flush;
+      console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
+    } else if (playerCardsObj[key].isStraight[0]) {
+      playerCardsObj[key].hand = "straight";
+      playerCardsObj[key].power = cardRanking.straight;
+      console.log(
+        `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
+      );
+    } else if (playerCardsObj[key].statements.includes("trips")) {
+      playerCardsObj[key].hand = "trips";
+      playerCardsObj[key].power = cardRanking.trips;
+      console.log(`${key} have trips`);
+    } else if (playerCardsObj[key].statements.includes("dups")) {
+      playerCardsObj[key].hand = "dups";
+      playerCardsObj[key].power = cardRanking.dups;
+      console.log(`${key} have dups`);
+    } else if (playerCardsObj[key].statements.includes("onePair")) {
+      playerCardsObj[key].hand = "onePair";
+      playerCardsObj[key].power = cardRanking.onePair;
+      console.log(`${key} have only 1 pair`);
+    } else {
+      playerCardsObj[key].hand = "highCard";
+      playerCardsObj[key].power = cardRanking.highCard;
+      console.log(`${key} only have a high card,lame`);
+    }
+
+    if (playerCardsObj[key].power > mostPower) {
+      mostPower = playerCardsObj[key].power;
+      mostPowerkey = key;
+    }
+  }
+}
+
+const decider = (mostPower, mostPowerKey) => {
+  //declare winner
+  let counter = 0;
+  let conflictKeys = [];
+  for (let [key, value] of Object.entries(playerCardsObj)) {
+    if (playerCardsObj[key].power === mostPower) {
+      counter++;
+      conflictKeys.push(key);
+    }
+  }
+  if (counter > 1) {
+    console.log(`${conflictKeys} have the same hands`);
+  } else {
+    console.log(`${mostPowerKey} wins!`);
+  }
+};
+
+decider(mostPower, mostPowerkey);
+console.log(playerCardsObj);
+
 //   return;
 // };

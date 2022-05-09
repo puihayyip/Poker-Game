@@ -1,0 +1,16 @@
+h3 {
+  font-size: 20px;
+  position: relative;
+  top: 200px;
+}
+h1 {
+  font-family: "rye", cursive;
+  font-size: 80px;
+  position: absolute;
+  /* margin-bottom: 50px; */
+  top: 0px;
+  /* margin: 0%; */
+  color: rgb(230, 160, 19);
+  border: dashed 2px;
+  background-color: #9e2b1b;
+}
