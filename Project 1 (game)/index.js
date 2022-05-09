@@ -105,10 +105,10 @@ for (const [key, value] of Object.entries(playerCardsObj)) {
   //splitting cards to compare
   if (key === "Community Cards") {
     // console.log(`${key}: ${value}`);
-    $("div").append($("<h3>").text(`${key}: ${value}`));
+    $("div.card").append($("<h3>").text(`${key}: ${value}`));
   } else {
     // console.log(`${key}: ${value.slice(0, 2)}`);
-    $("div").append($("<h3>").text(`${key}: ${value.slice(0, 2)}`));
+    $("div.card").append($("<h3>").text(`${key}: ${value.slice(0, 2)}`));
   }
   arrNum[key] = [];
   arrSuits[key] = [];
@@ -390,6 +390,7 @@ const decider = (mostPower, mostPowerKey) => {
     return conflictKeys;
   } else {
     console.log(`${mostPowerKey} wins!`);
+    // $("div.winner").append($("<h3>").text(`${mostPowerKey} wins!`));
   }
 };
 
