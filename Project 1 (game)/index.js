@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 8;
+let players = 4;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -327,8 +327,8 @@ const cardRanking = {
   straightflush: 9,
 };
 
-let mostPower = 0;
-let mostPowerKey = 0;
+let bestHandIndex = 0;
+let bestPlayer = 0;
 for (let [key, value] of Object.entries(playerCardsObj)) {
   //final hand of player
   if (key !== "Community Cards") {
@@ -368,33 +368,46 @@ for (let [key, value] of Object.entries(playerCardsObj)) {
       console.log(`${key} only have a high card,lame`);
     }
 
-    if (playerCardsObj[key].power > mostPower) {
-      mostPower = playerCardsObj[key].power;
-      mostPowerKey = key;
+    if (playerCardsObj[key].power > bestHandIndex) {
+      bestHandIndex = playerCardsObj[key].power;
+      bestPlayer = key;
     }
   }
 }
 
-const decider = (mostPower, mostPowerKey) => {
+const decider = (bestHandIndex, bestPlayer) => {
   //declare winner
   let counter = 0;
   let conflictKeys = [];
   for (let [key, value] of Object.entries(playerCardsObj)) {
-    if (playerCardsObj[key].power === mostPower) {
+    if (playerCardsObj[key].power === bestHandIndex) {
       counter++;
       conflictKeys.push(key);
     }
   }
   if (counter > 1) {
     console.log(`${conflictKeys} have the same hands`);
+    $("div.winner").append(
+      $("<h3>")
+        .text(`${conflictKeys} have the same hands`)
+        .css("background", "white")
+    );
     return conflictKeys;
   } else {
-    console.log(`${mostPowerKey} wins!`);
-    // $("div.winner").append($("<h3>").text(`${mostPowerKey} wins!`));
+    console.log(`${bestPlayer} wins!`);
+    $("div.winner").append(
+      $("<h3>")
+        .text(
+          `${bestPlayer} wins with a ${Object.keys(cardRanking).find(
+            (key) => cardRanking[key] === bestHandIndex
+          )}`
+        )
+        .css("background", "white")
+    );
   }
 };
 
-const conflictInfo = decider(mostPower, mostPowerKey);
+const conflictInfo = decider(bestHandIndex, bestPlayer);
 console.log(playerCardsObj);
 
 function highCardDecon() {
@@ -402,22 +415,26 @@ function highCardDecon() {
     console.log(key);
   }
 }
+
 function onePairDecon() {
   for (let key of conflictInfo) {
     const hand = playerCardsObj[key].sortedHand;
     console.log(hand);
   }
 }
+
 function dupsDecon() {
   for (let key of conflictInfo) {
     console.log(key);
   }
 }
+
 function tripsDecon() {
   for (let key of conflictInfo) {
     console.log(key);
   }
 }
+
 function straightDecon() {
   for (let key of conflictInfo) {
     console.log(key);
@@ -513,7 +530,7 @@ function quadsDecon() {
 }
 
 if (conflictInfo) {
-  switch (mostPower) {
+  switch (bestHandIndex) {
     case 1:
       highCardDecon();
       break;
