@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 8;
+let players = 2;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -267,8 +267,16 @@ const cardRanking = {
   straightflush: 9,
 };
 
+const cardManipulate = () => {
+  playerCardsObj["Player 1"].statements = ["fullHouse"];
+  playerCardsObj["Player 1"].sortedHand = { 4: 3, 7: 2, 9: 1, 13: 1 };
+  playerCardsObj["Player 2"].statements = ["fullHouse"];
+  playerCardsObj["Player 2"].sortedHand = { 4: 3, 7: 2, 9: 1, 10: 1 };
+};
+cardManipulate();
+
 let mostPower = 0;
-let mostPowerkey = 0;
+let mostPowerKey = 0;
 for (let [key, value] of Object.entries(playerCardsObj)) {
   //final hand of player
   if (key !== "Community Cards") {
@@ -310,7 +318,7 @@ for (let [key, value] of Object.entries(playerCardsObj)) {
 
     if (playerCardsObj[key].power > mostPower) {
       mostPower = playerCardsObj[key].power;
-      mostPowerkey = key;
+      mostPowerKey = key;
     }
   }
 }
@@ -327,13 +335,129 @@ const decider = (mostPower, mostPowerKey) => {
   }
   if (counter > 1) {
     console.log(`${conflictKeys} have the same hands`);
+    return conflictKeys;
   } else {
     console.log(`${mostPowerKey} wins!`);
   }
 };
 
-decider(mostPower, mostPowerkey);
+const conflictInfo = decider(mostPower, mostPowerKey);
 console.log(playerCardsObj);
 
-//   return;
-// };
+function highCardDecon() {
+  for (let key of conflictInfo) {
+    console.log(key);
+  }
+}
+function onePairDecon() {
+  for (let key of conflictInfo) {
+    const hand = playerCardsObj[key].sortedHand;
+    console.log(hand);
+  }
+}
+function dupsDecon() {
+  for (let key of conflictInfo) {
+    console.log(key);
+  }
+}
+function tripsDecon() {
+  for (let key of conflictInfo) {
+    console.log(key);
+  }
+}
+function straightDecon() {
+  for (let key of conflictInfo) {
+    console.log(key);
+  }
+}
+function flushDecon() {
+  for (let key of conflictInfo) {
+    console.log(key);
+  }
+}
+function fullHouseDecon() {
+  const fullHouseObj1 = {};
+  const fullHouseObj2 = {};
+  for (let key of conflictInfo) {
+    const hand = playerCardsObj[key].sortedHand;
+    fullHouseObj1[key] = Object.keys(hand).find((key) => hand[key] === 3);
+    fullHouseObj2[key] = Object.keys(hand).find((key) => hand[key] === 2);
+  }
+  let fullHouseChecker = [0, 0];
+  for (let [key, value] of Object.entries(fullHouseObj1)) {
+    if (value > fullHouseChecker[0]) {
+      fullHouseChecker[0] = value;
+      fullHouseChecker[1] = key;
+    } else if (value === fullHouseChecker[0]) {
+      fullHouseChecker[1] = "undecided";
+    }
+  }
+
+  if (fullHouseChecker[1] === "undecided") {
+    for (let [key, value] of Object.entries(fullHouseObj2)) {
+      if (value > fullHouseChecker[0]) {
+        fullHouseChecker[0] = value;
+        fullHouseChecker[1] = key;
+      } else if (value === fullHouseChecker[0]) {
+        fullHouseChecker[1] = "undecided";
+      }
+    }
+  }
+  let winner = fullHouseChecker[1];
+  if (winner === "undecided") {
+    winner = "draw";
+    console.log(`Its a draw`);
+  } else {
+    console.log(`Winner is ${winner}`);
+  }
+  return winner;
+}
+
+function quadsDecon() {
+  const quadObj = {};
+  for (let key of conflictInfo) {
+    const hand = playerCardsObj[key].sortedHand;
+    quadObj[key] = Object.keys(hand).find((key) => hand[key] === 4);
+  }
+  let quadChecker = [0, 0];
+  for (let [key, value] of Object.entries(quadObj)) {
+    if (value > quadChecker[0]) {
+      quadChecker[0] = value;
+      quadChecker[1] = key;
+    }
+  }
+  const winner = quadChecker[1];
+  console.log(`Winner is ${winner}`);
+  return winner;
+}
+
+if (conflictInfo) {
+  switch (mostPower) {
+    case 1:
+      highCardDecon();
+      break;
+    case 2:
+      onePairDecon();
+      break;
+    case 3:
+      dupsDecon();
+      break;
+    case 4:
+      tripsDecon();
+      break;
+    case 5:
+      straightDecon();
+      break;
+    case 6:
+      flushDecon();
+      break;
+    case 7:
+      fullHouseDecon();
+      break;
+    case 8:
+      quadsDecon();
+      break;
+    default:
+      alert("Wh0t mate");
+  }
+}
