@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 5;
+let players = 8;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -392,7 +392,7 @@ const decider = (bestHandIndex, bestPlayer) => {
     // );
     return conflictKeys;
   } else {
-    console.log(`${bestPlayer} wins!`);
+    // console.log(`${bestPlayer} wins!`);
     $("div.winner").append(
       $("<h3>")
         .text(
@@ -410,7 +410,7 @@ console.log(playerCardsObj);
 
 function highCardDecon() {
   let winner = "draw";
-  const checkHighCard = checkTopPair(1);
+  const checkHighCard = checkTopRepeats(1);
   winner = checkHighCard[0].player;
 
   if (winner === "draw") {
@@ -418,16 +418,17 @@ function highCardDecon() {
   } else {
     console.log(`Winner is ${winner}`);
   }
+  return winner;
 }
 
 function onePairDecon() {
   let winner = "draw";
 
-  const checkPair = checkTopPair(2);
+  const checkPair = checkTopRepeats(2);
   if (checkPair[1] === 1) {
     winner = checkPair[0].player;
   } else {
-    const checkHighCard = checkTopPair(1);
+    const checkHighCard = checkTopRepeats(1);
     winner = checkHighCard[0].player;
   }
 
@@ -435,11 +436,12 @@ function onePairDecon() {
     console.log(`Its a draw`);
   } else {
     console.log(`Winner is ${winner}`);
+    return winner;
   }
 }
 
-const checkTopPair = (num) => {
-  let maxDups = { value: 0, player: "" };
+const checkTopRepeats = (num) => {
+  let maxSameNumCards = { value: 0, player: "" };
   let counter = 1;
   for (let playerKey of conflictInfo) {
     const playerDups = playerCardsObj[playerKey].sortedHand;
@@ -452,32 +454,30 @@ const checkTopPair = (num) => {
         break;
       }
     }
-    if (maxDups.value === highestKey) {
+    if (maxSameNumCards.value === highestKey) {
       counter++;
-    } else if (maxDups.value < highestKey) {
-      maxDups.value = highestKey;
-      maxDups.player = playerKey;
+    } else if (maxSameNumCards.value < highestKey) {
+      maxSameNumCards.value = highestKey;
+      maxSameNumCards.player = playerKey;
     }
   }
-  // console.log(maxDups);
-  return [maxDups, counter];
+  // console.log(maxSameNumCards);
+  return [maxSameNumCards, counter];
 };
 
 function dupsDecon() {
   let winner = "draw";
 
-  const checkFirstPair = checkTopPair(2);
+  const checkFirstPair = checkTopRepeats(2);
   if (checkFirstPair[1] > 1) {
-    const checkSecondPair = checkTopPair(2);
+    const checkSecondPair = checkTopRepeats(2);
     if (checkSecondPair[1] > 1) {
-      const checkKicker = checkTopPair(1);
+      const checkKicker = checkTopRepeats(1);
       winner = checkKicker[0].player;
     } else {
-      // console.log(checkSecondPair[0]);
       winner = checkSecondPair[0].player;
     }
   } else {
-    // console.log(checkFirstPair[0]);
     winner = checkFirstPair[0].player;
   }
 
@@ -485,6 +485,7 @@ function dupsDecon() {
     console.log(`Its a draw`);
   } else {
     console.log(`Winner is ${winner}`);
+    return winner;
   }
 }
 
@@ -535,6 +536,7 @@ function tripsDecon() {
     console.log(`Its a draw`);
   } else {
     console.log(`Winner is ${winner}`);
+    return winner;
   }
 }
 
@@ -560,12 +562,11 @@ function straightDecon() {
   if (bestStraight[1].length === 1) {
     winner = bestStraight[1][0];
     console.log(`Winner is ${winner}`);
+    return winner;
   } else {
     winner = "draw";
     console.log("Its a draw");
   }
-
-  return winner;
 }
 
 function flushDecon() {
@@ -598,8 +599,8 @@ function flushDecon() {
     console.log(`Its a draw`);
   } else {
     console.log(`Winner is ${winner}`);
+    return winner;
   }
-  return winner;
 }
 
 function fullHouseDecon() {
@@ -636,8 +637,8 @@ function fullHouseDecon() {
     console.log(`Its a draw`);
   } else {
     console.log(`Winner is ${winner}`);
+    return winner;
   }
-  return winner;
 }
 
 function quadsDecon() {
@@ -658,31 +659,43 @@ function quadsDecon() {
   return winner;
 }
 
+const printer = (winner) => {
+  $("div.winner").append(
+    $("<h3>")
+      .text(
+        `${winner} wins with a ${Object.keys(cardRanking).find(
+          (key) => cardRanking[key] === bestHandIndex
+        )}`
+      )
+      .css("background", "white")
+  );
+};
+
 if (conflictInfo) {
   switch (bestHandIndex) {
     case 1:
-      highCardDecon();
+      printer(highCardDecon());
       break;
     case 2:
-      onePairDecon();
+      printer(onePairDecon());
       break;
     case 3:
-      dupsDecon();
+      printer(dupsDecon());
       break;
     case 4:
-      tripsDecon();
+      printer(tripsDecon());
       break;
     case 5:
-      straightDecon();
+      printer(straightDecon());
       break;
     case 6:
-      flushDecon();
+      printer(flushDecon());
       break;
     case 7:
-      fullHouseDecon();
+      printer(fullHouseDecon());
       break;
     case 8:
-      quadsDecon();
+      printer(quadsDecon());
       break;
     default:
       alert("Wh0t mate");
