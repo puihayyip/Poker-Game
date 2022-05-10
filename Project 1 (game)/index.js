@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 4;
+let players = 2;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -73,30 +73,30 @@ const setup = () => {
 };
 playerCardsObj = setup();
 
-// const cardManipulate = () => {
-//   playerCardsObj["Community Cards"] = ["2 ♢", "J ♢", "9 ♢", "Q ♢", "A ♢"];
-//   // playerCardsObj["Player 1"].statements = ["flush"];
-//   playerCardsObj["Player 1"] = [
-//     "10 ♡",
-//     "3 ♡",
-//     "2 ♢",
-//     "J ♢",
-//     "9 ♢",
-//     "Q ♢",
-//     "A ♢",
-//   ];
-//   // playerCardsObj["Player 2"].statements = ["flush"];
-//   playerCardsObj["Player 2"] = [
-//     "6 ♠",
-//     "8 ♠",
-//     "2 ♢",
-//     "J ♢",
-//     "9 ♢",
-//     "Q ♢",
-//     "A ♢",
-//   ];
-// };
-// cardManipulate();
+const cardManipulate = () => {
+  playerCardsObj["Community Cards"] = ["2 ♢", "3 ♢", "4 ♡", "Q ♡", "A ♢"];
+  // playerCardsObj["Player 1"].statements = ["flush"];
+  playerCardsObj["Player 1"] = [
+    "10 ♡",
+    "5 ♡",
+    "2 ♢",
+    "3 ♢",
+    "4 ♡",
+    "Q ♡",
+    "A ♢",
+  ];
+  // playerCardsObj["Player 2"].statements = ["flush"];
+  playerCardsObj["Player 2"] = [
+    "7 ♠",
+    "5 ♠",
+    "2 ♢",
+    "3 ♢",
+    "4 ♡",
+    "Q ♡",
+    "A ♢",
+  ];
+};
+cardManipulate();
 
 const arrNum = {};
 const arrSuits = {};
@@ -436,10 +436,35 @@ function tripsDecon() {
 }
 
 function straightDecon() {
-  for (let key of conflictInfo) {
-    console.log(key);
+  let winner = "undecided";
+  let bestStraight = [0, []];
+  let straights = [];
+  for (let i = 0; i < conflictInfo.length; i++) {
+    const hand = playerCardsObj[conflictInfo[i]].isStraight[1];
+    if (hand > bestStraight[0]) {
+      bestStraight[0] = hand;
+    }
   }
+
+  for (let i = 0; i < conflictInfo.length; i++) {
+    const hand = playerCardsObj[conflictInfo[i]].isStraight[1];
+    if (hand === bestStraight[0]) {
+      bestStraight[1].push(conflictInfo[i]);
+      // console.log(bestStraight);
+    }
+  }
+
+  if (bestStraight[1].length === 1) {
+    winner = bestStraight[1][0];
+    console.log(`Winner is ${winner}`);
+  } else {
+    winner = "draw";
+    console.log("Its a draw");
+  }
+
+  return winner;
 }
+
 function flushDecon() {
   const flushArrCompare = [];
   let winner = "undecided";
@@ -447,7 +472,7 @@ function flushDecon() {
     for (let j = 0; j < conflictInfo.length; j++) {
       flushArrCompare[j] = playerCardsObj[conflictInfo[j]].isFlush[2][i];
     }
-    var maxNum = [0, -1];
+    let maxNum = [0, -1];
     for (let j = 0; j < flushArrCompare.length; j++) {
       for (let n = j + 1; n < flushArrCompare.length; n++) {
         if (flushArrCompare[j] !== flushArrCompare[n]) {
