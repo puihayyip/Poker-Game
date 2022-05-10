@@ -1,10 +1,3 @@
-const innerHTML = (text) => {
-  const textnode = document.createTextNode(text);
-  const node = document.createElement("p");
-  node.appendChild(textnode);
-  document.querySelector("h2").appendChild(node);
-};
-
 // const run = (players) => {
 let players = 8;
 const suits = ["♢", "♣", "♡", "♠"];
@@ -73,27 +66,81 @@ const setup = () => {
 };
 playerCardsObj = setup();
 
-// const cardManipulate = () => {
-//   playerCardsObj["Community Cards"] = ["5 ♡", "6 ♣", "3 ♡", "9 ♠", "10 ♡"];
-//   playerCardsObj["Player 1"] = [
-//     "2 ♠",
-//     "10 ♠",
-//     "5 ♡",
-//     "6 ♣",
-//     "3 ♡",
-//     "9 ♠",
-//     "10 ♡",
-//   ];
-//   playerCardsObj["Player 2"] = [
-//     "A ♡",
-//     "10 ♢",
-//     "5 ♡",
-//     "6 ♣",
-//     "3 ♡",
-//     "9 ♠",
-//     "10 ♡",
-//   ];
-// };
+const cardManipulate = () => {
+  playerCardsObj["Community Cards"] = ["8 ♡", "4 ♣", "5 ♡", "6 ♠", "7 ♡"];
+  playerCardsObj["Player 1"] = [
+    "2 ♠",
+    "10 ♠",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+  playerCardsObj["Player 2"] = [
+    "A ♡",
+    "2 ♢",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+  playerCardsObj["Player 3"] = [
+    "A ♡",
+    "9 ♢",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+  playerCardsObj["Player 4"] = [
+    "A ♡",
+    "10 ♢",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+  playerCardsObj["Player 5"] = [
+    "A ♡",
+    "10 ♢",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+  playerCardsObj["Player 6"] = [
+    "A ♡",
+    "J ♢",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+  playerCardsObj["Player 7"] = [
+    "A ♡",
+    "Q ♢",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+  playerCardsObj["Player 8"] = [
+    "A ♡",
+    "9 ♢",
+    "8 ♡",
+    "4 ♣",
+    "5 ♡",
+    "6 ♠",
+    "7 ♡",
+  ];
+};
 // cardManipulate();
 
 const arrNum = {};
@@ -660,15 +707,17 @@ function quadsDecon() {
 }
 
 const printer = (winner) => {
-  $("div.winner").append(
-    $("<h3>")
-      .text(
-        `${winner} wins with a ${Object.keys(cardRanking).find(
-          (key) => cardRanking[key] === bestHandIndex
-        )}`
-      )
-      .css("background", "white")
-  );
+  if (winner) {
+    $("div.winner").append(
+      $("<h3>")
+        .text(
+          `${winner} wins with a ${Object.keys(cardRanking).find(
+            (key) => cardRanking[key] === bestHandIndex
+          )}`
+        )
+        .css("background", "white")
+    );
+  }
 };
 
 if (conflictInfo) {
