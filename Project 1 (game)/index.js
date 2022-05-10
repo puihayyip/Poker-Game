@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 2;
+let players = 5;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -74,43 +74,25 @@ const setup = () => {
 playerCardsObj = setup();
 
 // const cardManipulate = () => {
-//   playerCardsObj["Community Cards"] = ["5 ♡", "6 ♣", "3 ♡", "10 ♠", "10 ♡"];
-// playerCardsObj["Player 1"] = [
-//   "6 ♠",
-//   "3 ♠",
-//   "7 ♡",
-//   "6 ♣",
-//   "3 ♡",
-//   "7 ♣",
-//   "10 ♡",
-// ];
-// playerCardsObj["Player 2"] = [
-//   "6 ♡",
-//   "10 ♢",
-//   "7 ♡",
-//   "6 ♣",
-//   "3 ♡",
-//   "7 ♣",
-//   "10 ♡",
-// ];
-// playerCardsObj["Player 1"] = [
-//   "5 ♠",
-//   "3 ♠",
-//   "5 ♡",
-//   "6 ♣",
-//   "3 ♡",
-//   "10 ♠",
-//   "10 ♡",
-// ];
-// playerCardsObj["Player 2"] = [
-//   "7 ♡",
-//   "5 ♢",
-//   "5 ♡",
-//   "6 ♣",
-//   "3 ♡",
-//   "10 ♠",
-//   "10 ♡",
-// ];
+//   playerCardsObj["Community Cards"] = ["5 ♡", "6 ♣", "3 ♡", "9 ♠", "10 ♡"];
+//   playerCardsObj["Player 1"] = [
+//     "2 ♠",
+//     "10 ♠",
+//     "5 ♡",
+//     "6 ♣",
+//     "3 ♡",
+//     "9 ♠",
+//     "10 ♡",
+//   ];
+//   playerCardsObj["Player 2"] = [
+//     "A ♡",
+//     "10 ♢",
+//     "5 ♡",
+//     "6 ♣",
+//     "3 ♡",
+//     "9 ♠",
+//     "10 ♡",
+//   ];
 // };
 // cardManipulate();
 
@@ -402,12 +384,12 @@ const decider = (bestHandIndex, bestPlayer) => {
     }
   }
   if (counter > 1) {
-    console.log(`${conflictKeys} have the same hands`);
-    $("div.winner").append(
-      $("<h3>")
-        .text(`${conflictKeys} have the same hands`)
-        .css("background", "white")
-    );
+    // console.log(`${conflictKeys} have the same hands`);
+    // $("div.winner").append(
+    //   $("<h3>")
+    //     .text(`${conflictKeys} have the same hands`)
+    //     .css("background", "white")
+    // );
     return conflictKeys;
   } else {
     console.log(`${bestPlayer} wins!`);
@@ -427,105 +409,62 @@ const conflictInfo = decider(bestHandIndex, bestPlayer);
 console.log(playerCardsObj);
 
 function highCardDecon() {
-  for (let key of conflictInfo) {
-    console.log(key);
+  let winner = "draw";
+  const checkHighCard = checkTopPair(1);
+  winner = checkHighCard[0].player;
+
+  if (winner === "draw") {
+    console.log(`Its a draw`);
+  } else {
+    console.log(`Winner is ${winner}`);
   }
 }
 
 function onePairDecon() {
-  for (let key of conflictInfo) {
-    const hand = playerCardsObj[key].sortedHand;
-    console.log(hand);
+  let winner = "draw";
+
+  const checkPair = checkTopPair(2);
+  if (checkPair[1] === 1) {
+    winner = checkPair[0].player;
+  } else {
+    const checkHighCard = checkTopPair(1);
+    winner = checkHighCard[0].player;
+  }
+
+  if (winner === "draw") {
+    console.log(`Its a draw`);
+  } else {
+    console.log(`Winner is ${winner}`);
   }
 }
 
-// function dupsDecon() {
-//   let winner = "draw";
-//   let maxDups = { value: 0, player: "" };
-//   let counter = 1;
-//   for (let playerKey of conflictInfo) {
-//     const check3pair = () => {
-//       const checker = { ...playerCardsObj[playerKey].sortedHand };
-//       let dupsValue = 0;
-//       for (let i = 0; i < 2; i++) {
-//         dupsValue = Object.keys(checker).find((key) => checker[key] === 2);
-//         delete checker[dupsValue];
-//         dupsValue = parseInt(
-//           Object.keys(checker).find((key) => checker[key] === 2)
-//         );
-//       }
-//       if (dupsValue) {
-//         console.log(`${playerKey} has 3 pairs`);
-//       }
-//       return true;
-//     };
-//     const check = check3pair();
-
-//     if (check) {
-//       const playerDups = playerCardsObj[playerKey].sortedHand;
-//       let dupsValue = Object.keys(playerDups).find(
-//         (key) => playerDups[key] === 2
-//       );
-//       delete playerDups[dupsValue];
-//       dupsValue = parseInt(
-//         Object.keys(playerDups).find((key) => playerDups[key] === 2)
-//       );
-//       if (dupsValue === maxDups.value) {
-//         counter++;
-//       } else if (dupsValue > maxDups.value) {
-//         maxDups.value = dupsValue;
-//         maxDups.player = playerKey;
-//       }
-//     }
-//     console.log(maxDups);
-//   }
-
-//   if (counter > 1) {
-//     dupsDecon2();
-//   } else {
-//     winner = maxDups.player;
-//   }
-
-//   function dupsDecon2() {
-//     console.log("Hello continue working");
-//   }
-
-//   if (winner === "draw") {
-//     console.log(`Its a draw`);
-//   } else {
-//     console.log(`Winner is ${winner}`);
-//   }
-// }
-function dupsDecon() {
-  let winner = "draw";
-  const checkTopPair = (num) => {
-    let maxDups = { value: 0, player: "" };
-    let counter = 1;
-    for (let playerKey of conflictInfo) {
-      const playerDups = playerCardsObj[playerKey].sortedHand;
-      const reversedKeys = Object.keys(playerDups).reverse();
-      let highestKey = 0;
-      for (let key of reversedKeys) {
-        if (playerDups[key] === num) {
-          highestKey = parseInt(key);
-          delete playerDups[key];
-          break;
-        }
-      }
-      if (maxDups.value === highestKey) {
-        counter++;
-      } else if (maxDups.value < highestKey) {
-        maxDups.value = highestKey;
-        maxDups.player = playerKey;
+const checkTopPair = (num) => {
+  let maxDups = { value: 0, player: "" };
+  let counter = 1;
+  for (let playerKey of conflictInfo) {
+    const playerDups = playerCardsObj[playerKey].sortedHand;
+    const reversedKeys = Object.keys(playerDups).reverse();
+    let highestKey = 0;
+    for (let key of reversedKeys) {
+      if (playerDups[key] === num) {
+        highestKey = parseInt(key);
+        delete playerDups[key];
+        break;
       }
     }
-    console.log(maxDups);
-    return [maxDups, counter];
-  };
+    if (maxDups.value === highestKey) {
+      counter++;
+    } else if (maxDups.value < highestKey) {
+      maxDups.value = highestKey;
+      maxDups.player = playerKey;
+    }
+  }
+  // console.log(maxDups);
+  return [maxDups, counter];
+};
 
-  // const kicker = () => {
-  //   console.log(`Need to check kicker`);
-  // };
+function dupsDecon() {
+  let winner = "draw";
 
   const checkFirstPair = checkTopPair(2);
   if (checkFirstPair[1] > 1) {
@@ -534,11 +473,11 @@ function dupsDecon() {
       const checkKicker = checkTopPair(1);
       winner = checkKicker[0].player;
     } else {
-      console.log(checkSecondPair[0]);
+      // console.log(checkSecondPair[0]);
       winner = checkSecondPair[0].player;
     }
   } else {
-    console.log(checkFirstPair[0]);
+    // console.log(checkFirstPair[0]);
     winner = checkFirstPair[0].player;
   }
 
