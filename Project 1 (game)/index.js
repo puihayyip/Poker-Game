@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 2;
+let players = 3;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -74,25 +74,23 @@ const setup = () => {
 playerCardsObj = setup();
 
 const cardManipulate = () => {
-  playerCardsObj["Community Cards"] = ["2 ♢", "3 ♢", "4 ♡", "Q ♡", "A ♢"];
-  // playerCardsObj["Player 1"].statements = ["flush"];
+  playerCardsObj["Community Cards"] = ["2 ♢", "2 ♢", "K ♡", "4 ♡", "A ♢"];
   playerCardsObj["Player 1"] = [
-    "10 ♡",
-    "5 ♡",
+    "2 ♠",
+    "3 ♡",
     "2 ♢",
-    "3 ♢",
+    "2 ♡",
+    "K ♡",
     "4 ♡",
-    "Q ♡",
     "A ♢",
   ];
-  // playerCardsObj["Player 2"].statements = ["flush"];
   playerCardsObj["Player 2"] = [
-    "7 ♠",
-    "5 ♠",
+    "2 ♣",
+    "10 ♡",
     "2 ♢",
-    "3 ♢",
+    "2 ♢",
+    "K ♡",
     "4 ♡",
-    "Q ♡",
     "A ♢",
   ];
 };
@@ -430,8 +428,52 @@ function dupsDecon() {
 }
 
 function tripsDecon() {
+  let winner = "draw";
+  const tripObj = {};
+  let maxTrip = [0, -1];
   for (let key of conflictInfo) {
-    console.log(key);
+    const playerTrip = playerCardsObj[key].sortedHand;
+    tripObj[key] = Object.keys(playerTrip).find((key) => playerTrip[key] === 3);
+    if (maxTrip[0] < tripObj[key]) {
+      maxTrip[0] = tripObj[key];
+      maxTrip[1] = key;
+    }
+  }
+  let counter = 0;
+  for (let i = 0; i < conflictInfo.length; i++) {
+    if (tripObj[conflictInfo[i]] === maxTrip[0]) {
+      counter++;
+    }
+  }
+
+  if (counter > 1) {
+    tripsDecon2();
+  } else {
+    winner = conflictInfo[maxTrip[0] - 1];
+  }
+
+  function tripsDecon2() {
+    const tripArr = [];
+    for (let key of conflictInfo) {
+      const sortedHandTrips = playerCardsObj[key].sortedHand;
+      delete sortedHandTrips[maxTrip[0]];
+      tripArr.push(Object.keys(sortedHandTrips));
+    }
+    for (let i = 3; i >= 0; i--) {
+      if (parseInt(tripArr[0][i]) > parseInt(tripArr[1][i])) {
+        winner = conflictInfo[0];
+        break;
+      } else if (parseInt(tripArr[1][i]) > parseInt(tripArr[0][i])) {
+        winner = conflictInfo[1];
+        break;
+      }
+    }
+  }
+
+  if (winner === "draw") {
+    console.log(`Its a draw`);
+  } else {
+    console.log(`Winner is ${winner}`);
   }
 }
 
