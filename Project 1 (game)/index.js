@@ -73,46 +73,46 @@ const setup = () => {
 };
 playerCardsObj = setup();
 
-const cardManipulate = () => {
-  playerCardsObj["Community Cards"] = ["7 ♡", "6 ♣", "3 ♡", "7 ♣", "10 ♡"];
-  // playerCardsObj["Player 1"] = [
-  //   "6 ♠",
-  //   "3 ♠",
-  //   "7 ♡",
-  //   "6 ♣",
-  //   "3 ♡",
-  //   "7 ♣",
-  //   "10 ♡",
-  // ];
-  // playerCardsObj["Player 2"] = [
-  //   "6 ♡",
-  //   "10 ♢",
-  //   "7 ♡",
-  //   "6 ♣",
-  //   "3 ♡",
-  //   "7 ♣",
-  //   "10 ♡",
-  // ];
-  playerCardsObj["Player 1"] = [
-    "J ♠",
-    "3 ♠",
-    "7 ♡",
-    "6 ♣",
-    "3 ♡",
-    "7 ♣",
-    "10 ♡",
-  ];
-  playerCardsObj["Player 2"] = [
-    "A ♡",
-    "10 ♢",
-    "7 ♡",
-    "6 ♣",
-    "3 ♡",
-    "7 ♣",
-    "10 ♡",
-  ];
-};
-cardManipulate();
+// const cardManipulate = () => {
+//   playerCardsObj["Community Cards"] = ["5 ♡", "6 ♣", "3 ♡", "10 ♠", "10 ♡"];
+// playerCardsObj["Player 1"] = [
+//   "6 ♠",
+//   "3 ♠",
+//   "7 ♡",
+//   "6 ♣",
+//   "3 ♡",
+//   "7 ♣",
+//   "10 ♡",
+// ];
+// playerCardsObj["Player 2"] = [
+//   "6 ♡",
+//   "10 ♢",
+//   "7 ♡",
+//   "6 ♣",
+//   "3 ♡",
+//   "7 ♣",
+//   "10 ♡",
+// ];
+// playerCardsObj["Player 1"] = [
+//   "5 ♠",
+//   "3 ♠",
+//   "5 ♡",
+//   "6 ♣",
+//   "3 ♡",
+//   "10 ♠",
+//   "10 ♡",
+// ];
+// playerCardsObj["Player 2"] = [
+//   "7 ♡",
+//   "5 ♢",
+//   "5 ♡",
+//   "6 ♣",
+//   "3 ♡",
+//   "10 ♠",
+//   "10 ♡",
+// ];
+// };
+// cardManipulate();
 
 const arrNum = {};
 const arrSuits = {};
@@ -498,24 +498,55 @@ function onePairDecon() {
 // }
 function dupsDecon() {
   let winner = "draw";
-  let maxDups = { value: 0, player: "" };
-  let counter = 1;
-  for (let playerKey of conflictInfo) {
-    const playerDups = playerCardsObj[playerKey].sortedHand;
-    const reversedKeys = Object.keys(playerDups).reverse();
-    let highestKey = 0;
-    for (let key of reversedKeys) {
-      if (playerDups[key] === 2) {
-        highestKey = key;
-        break;
+  const checkTopPair = (num) => {
+    let maxDups = { value: 0, player: "" };
+    let counter = 1;
+    for (let playerKey of conflictInfo) {
+      const playerDups = playerCardsObj[playerKey].sortedHand;
+      const reversedKeys = Object.keys(playerDups).reverse();
+      let highestKey = 0;
+      for (let key of reversedKeys) {
+        if (playerDups[key] === num) {
+          highestKey = parseInt(key);
+          delete playerDups[key];
+          break;
+        }
+      }
+      if (maxDups.value === highestKey) {
+        counter++;
+      } else if (maxDups.value < highestKey) {
+        maxDups.value = highestKey;
+        maxDups.player = playerKey;
       }
     }
-    if (maxDups.value < highestKey) {
-      maxDups.value = highestKey;
-      maxDups.player = playerDups[highestKey];
+    console.log(maxDups);
+    return [maxDups, counter];
+  };
+
+  // const kicker = () => {
+  //   console.log(`Need to check kicker`);
+  // };
+
+  const checkFirstPair = checkTopPair(2);
+  if (checkFirstPair[1] > 1) {
+    const checkSecondPair = checkTopPair(2);
+    if (checkSecondPair[1] > 1) {
+      const checkKicker = checkTopPair(1);
+      winner = checkKicker[0].player;
+    } else {
+      console.log(checkSecondPair[0]);
+      winner = checkSecondPair[0].player;
     }
+  } else {
+    console.log(checkFirstPair[0]);
+    winner = checkFirstPair[0].player;
   }
-  console.log(maxDups);
+
+  if (winner === "draw") {
+    console.log(`Its a draw`);
+  } else {
+    console.log(`Winner is ${winner}`);
+  }
 }
 
 function tripsDecon() {
