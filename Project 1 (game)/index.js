@@ -6,7 +6,7 @@ const innerHTML = (text) => {
 };
 
 // const run = (players) => {
-let players = 3;
+let players = 2;
 const suits = ["♢", "♣", "♡", "♠"];
 const cardValue = [
   "2",
@@ -74,24 +74,42 @@ const setup = () => {
 playerCardsObj = setup();
 
 const cardManipulate = () => {
-  playerCardsObj["Community Cards"] = ["2 ♢", "2 ♢", "K ♡", "4 ♡", "A ♢"];
+  playerCardsObj["Community Cards"] = ["7 ♡", "6 ♣", "3 ♡", "7 ♣", "10 ♡"];
+  // playerCardsObj["Player 1"] = [
+  //   "6 ♠",
+  //   "3 ♠",
+  //   "7 ♡",
+  //   "6 ♣",
+  //   "3 ♡",
+  //   "7 ♣",
+  //   "10 ♡",
+  // ];
+  // playerCardsObj["Player 2"] = [
+  //   "6 ♡",
+  //   "10 ♢",
+  //   "7 ♡",
+  //   "6 ♣",
+  //   "3 ♡",
+  //   "7 ♣",
+  //   "10 ♡",
+  // ];
   playerCardsObj["Player 1"] = [
-    "2 ♠",
+    "J ♠",
+    "3 ♠",
+    "7 ♡",
+    "6 ♣",
     "3 ♡",
-    "2 ♢",
-    "2 ♡",
-    "K ♡",
-    "4 ♡",
-    "A ♢",
+    "7 ♣",
+    "10 ♡",
   ];
   playerCardsObj["Player 2"] = [
-    "2 ♣",
+    "A ♡",
+    "10 ♢",
+    "7 ♡",
+    "6 ♣",
+    "3 ♡",
+    "7 ♣",
     "10 ♡",
-    "2 ♢",
-    "2 ♢",
-    "K ♡",
-    "4 ♡",
-    "A ♢",
   ];
 };
 cardManipulate();
@@ -421,10 +439,83 @@ function onePairDecon() {
   }
 }
 
+// function dupsDecon() {
+//   let winner = "draw";
+//   let maxDups = { value: 0, player: "" };
+//   let counter = 1;
+//   for (let playerKey of conflictInfo) {
+//     const check3pair = () => {
+//       const checker = { ...playerCardsObj[playerKey].sortedHand };
+//       let dupsValue = 0;
+//       for (let i = 0; i < 2; i++) {
+//         dupsValue = Object.keys(checker).find((key) => checker[key] === 2);
+//         delete checker[dupsValue];
+//         dupsValue = parseInt(
+//           Object.keys(checker).find((key) => checker[key] === 2)
+//         );
+//       }
+//       if (dupsValue) {
+//         console.log(`${playerKey} has 3 pairs`);
+//       }
+//       return true;
+//     };
+//     const check = check3pair();
+
+//     if (check) {
+//       const playerDups = playerCardsObj[playerKey].sortedHand;
+//       let dupsValue = Object.keys(playerDups).find(
+//         (key) => playerDups[key] === 2
+//       );
+//       delete playerDups[dupsValue];
+//       dupsValue = parseInt(
+//         Object.keys(playerDups).find((key) => playerDups[key] === 2)
+//       );
+//       if (dupsValue === maxDups.value) {
+//         counter++;
+//       } else if (dupsValue > maxDups.value) {
+//         maxDups.value = dupsValue;
+//         maxDups.player = playerKey;
+//       }
+//     }
+//     console.log(maxDups);
+//   }
+
+//   if (counter > 1) {
+//     dupsDecon2();
+//   } else {
+//     winner = maxDups.player;
+//   }
+
+//   function dupsDecon2() {
+//     console.log("Hello continue working");
+//   }
+
+//   if (winner === "draw") {
+//     console.log(`Its a draw`);
+//   } else {
+//     console.log(`Winner is ${winner}`);
+//   }
+// }
 function dupsDecon() {
-  for (let key of conflictInfo) {
-    console.log(key);
+  let winner = "draw";
+  let maxDups = { value: 0, player: "" };
+  let counter = 1;
+  for (let playerKey of conflictInfo) {
+    const playerDups = playerCardsObj[playerKey].sortedHand;
+    const reversedKeys = Object.keys(playerDups).reverse();
+    let highestKey = 0;
+    for (let key of reversedKeys) {
+      if (playerDups[key] === 2) {
+        highestKey = key;
+        break;
+      }
+    }
+    if (maxDups.value < highestKey) {
+      maxDups.value = highestKey;
+      maxDups.player = playerDups[highestKey];
+    }
   }
+  console.log(maxDups);
 }
 
 function tripsDecon() {
@@ -514,13 +605,14 @@ function flushDecon() {
     for (let j = 0; j < conflictInfo.length; j++) {
       flushArrCompare[j] = playerCardsObj[conflictInfo[j]].isFlush[2][i];
     }
+    console.log(flushArrCompare);
     let maxNum = [0, -1];
     for (let j = 0; j < flushArrCompare.length; j++) {
       for (let n = j + 1; n < flushArrCompare.length; n++) {
         if (flushArrCompare[j] !== flushArrCompare[n]) {
-          if (flushArrCompare[j] > maxNum[0]) {
-            maxNum[0] = flushArrCompare[j];
-            maxNum[1] = j;
+          if (flushArrCompare[n] > maxNum[0]) {
+            maxNum[0] = flushArrCompare[n];
+            maxNum[1] = n;
           }
         }
       }
