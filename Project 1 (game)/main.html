@@ -16,10 +16,49 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <link href="http://fonts.cdnfonts.com/css/poker" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <h1>Texas Poker NLH</h1>
-    <div class="card"></div>
+    <!-- <div id="startpage"> -->
+    <div id="startpage" hidden>
+      <h1>Texas Poker NLH</h1>
+      <div class="click-to-start">
+        <p>Click to start</p>
+      </div>
+    </div>
+
+    <!-- <div id="settingPage" hidden> -->
+    <div id="settingPage">
+      <form class="initialInput">
+        <label for="numOfPlayers">Number of Players: </label>
+
+        <select id="numOfPlayers">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option></select
+        ><br /><br />
+
+        <label for="blindValue">Enter Big Blind Value: $</label>
+        <input type="text" id="blindValue" value="2" /><br /><br />
+        <div class="submission">
+          <input type="button" value="Submit" id="submitButton" />
+        </div>
+        <br />
+      </form>
+
+      <form class="playerDetails"></form>
+      <button id="putOnYourPokerFace" hidden>Put on Your Poker Face!</button>
+    </div>
+
+    <div class="card" hidden></div>
     <div class="winner"></div>
   </body>
 </html>

@@ -1,20 +1,38 @@
-h3 {
-  font-size: 20px;
-  position: relative;
-  top: 200px;
-}
-h1 {
-  font-family: "rye", cursive;
-  font-size: 80px;
-  position: absolute;
-  /* margin-bottom: 50px; */
-  top: 0px;
-  /* margin: 0%; */
-  color: rgb(230, 160, 19);
-  border: dashed 2px;
-  background-color: #9e2b1b;
+body {
+  background-image: url("./pictures/pokerBackground.png");
+  /* background-position: center; */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
 }
 
-body {
-  background-color: rgb(158, 158, 158);
+#startpage {
+  margin: 0px auto;
+  text-align: center;
+  /* border: 1px solid red; */
+  /* background-color: turquoise; */
+  position: relative;
+  top: 300px;
+  font-family: "Poker", sans-serif;
+}
+
+#settingPage {
+  margin: 0px auto;
+  /* text-align: center; */
+  /* background-color: green; */
+  position: relative;
+  top: 50px;
+  left: 100px;
+  right: 100px;
+  font-size: 1.5em;
+  background-color: turquoise;
+  padding: 2em;
+  font-family: "Bebas Neue", cursive;
+}
+
+h1 {
+  font-size: 6em;
+}
+
+.click-to-start {
+  font-size: 2em;
 }
