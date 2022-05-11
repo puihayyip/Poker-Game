@@ -36,3 +36,7 @@ h1 {
 .click-to-start {
   font-size: 2em;
 }
+
+.card {
+  background-color: beige;
+}

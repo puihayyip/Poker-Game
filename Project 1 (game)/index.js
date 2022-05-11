@@ -801,10 +801,10 @@ $(".click-to-start").mouseleave(() => {
   $(".click-to-start").css("color", "black");
 });
 
-$(".click-to-start").on("click", () => {
+$(".click-to-start").on("click", (e) => {
   $("#startpage").fadeOut("fast");
-  setInterval(() => {
-    $("#settingPage").fadeIn("fast");
+  setTimeout(() => {
+    $("#settingPage").fadeIn();
   }, 500);
 });
 
@@ -864,7 +864,7 @@ const storeInitialData=()=>{
     } else{
       app.players.push($(`#player${i}Name`).val())
     }
-    
+
     if($(`#player${i}Name`).val()===''){
       app.playersStash.push($(`#player${i}BuyIn`).attr('placeholder'))
     } else{
@@ -880,5 +880,11 @@ $("#putOnYourPokerFace").on("click", (e) => {
   e.preventDefault();
   storeInitialData();
   run($("#numOfPlayers").val(), playerCardsObj, app.players);
-  $("#settingPage").fadeOut("fast");
+  $("#settingPage").fadeOut("slow");
+  $(".card").show()
+  gameOn();
 });
+
+const gameOn=()=>{
+  console.log("Testing")
+}
