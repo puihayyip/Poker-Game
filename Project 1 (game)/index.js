@@ -65,28 +65,37 @@ const run = (players, playerCardsObj, playerNames) => {
   };
   playerCardsObj = setup();
 
-  // const cardManipulate = () => {
-    // const suits = ["♢", "♣", "♡", "♠"];Player 1: A ♡,10 ♡
-  //   playerCardsObj["Community Cards"] = ["9 ♣", "J ♣", "A ♣", "Q ♢", "K ♢"];
-  //   playerCardsObj["Player 1"] = [
-  //     "4  ♡",
-  //     "6 ♣",
-  //     "9 ♣",
-  //     "J ♣",
-  //     "A ♣",
-  //     "Q ♢",
-  //     "K ♢",
-  //   ];
-  //   playerCardsObj["Player 2"] = [
-  //     "6 ♠",
-  //     "2 ♢",
-  //     "9 ♣",
-  //     "J ♣",
-  //     "A ♣",
-  //     "Q ♢",
-  //     "K ♢",
-  //   ];
-  // };
+  const cardManipulate = () => {
+    const suits = ["♢", "♣", "♡", "♠"];
+    playerCardsObj["Community Cards"] = ["9 ♣", "J ♣", "A ♣", "Q ♢", "K ♢"];
+    playerCardsObj["Player 1"] = [
+      "4  ♡",
+      "6 ♣",
+      "9 ♣",
+      "J ♣",
+      "A ♣",
+      "Q ♢",
+      "K ♢",
+    ];
+    playerCardsObj["Player 2"] = [
+      "6 ♠",
+      "2 ♢",
+      "9 ♣",
+      "J ♣",
+      "A ♣",
+      "Q ♢",
+      "K ♢",
+    ];
+    playerCardsObj["Player 3"] = [
+      "2 ♠",
+      "3 ♢",
+      "9 ♣",
+      "J ♣",
+      "A ♣",
+      "Q ♢",
+      "K ♢",
+    ];
+  };
   // cardManipulate();
 
   const arrNum = {};
@@ -340,37 +349,37 @@ const run = (players, playerCardsObj, playerNames) => {
       if (playerCardsObj[key].statements.includes("quads")) {
         playerCardsObj[key].hand = "quads";
         playerCardsObj[key].power = cardRanking.quads;
-        console.log(`${key} have quads`);
+        // console.log(`${key} have quads`);
       } else if (playerCardsObj[key].statements.includes("fullHouse")) {
         playerCardsObj[key].hand = "fullHouse";
         playerCardsObj[key].power = cardRanking.fullHouse;
-        console.log(`${key} have full house`);
+        // console.log(`${key} have full house`);
       } else if (playerCardsObj[key].isFlush[0]) {
         playerCardsObj[key].hand = "flush";
         playerCardsObj[key].power = cardRanking.flush;
-        console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
+        // console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
       } else if (playerCardsObj[key].isStraight[0]) {
         playerCardsObj[key].hand = "straight";
         playerCardsObj[key].power = cardRanking.straight;
-        console.log(
-          `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
-        );
+        // console.log(
+          // `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
+        // );
       } else if (playerCardsObj[key].statements.includes("trips")) {
         playerCardsObj[key].hand = "trips";
         playerCardsObj[key].power = cardRanking.trips;
-        console.log(`${key} have trips`);
+        // console.log(`${key} have trips`);
       } else if (playerCardsObj[key].statements.includes("dups")) {
         playerCardsObj[key].hand = "dups";
         playerCardsObj[key].power = cardRanking.dups;
-        console.log(`${key} have dups`);
+        // console.log(`${key} have dups`);
       } else if (playerCardsObj[key].statements.includes("onePair")) {
         playerCardsObj[key].hand = "onePair";
         playerCardsObj[key].power = cardRanking.onePair;
-        console.log(`${key} have only 1 pair`);
+        // console.log(`${key} have only 1 pair`);
       } else {
         playerCardsObj[key].hand = "highCard";
         playerCardsObj[key].power = cardRanking.highCard;
-        console.log(`${key} only have a high card,lame`);
+        // console.log(`${key} only have a high card,lame`);
       }
 
       if (playerCardsObj[key].power > bestHandIndex) {
@@ -394,24 +403,24 @@ const result=(data)=>{
       }
     }
     if (counter > 1) {
-      // console.log(`${conflictKeys} have the same hands`);
-      // $("div.winner").append(
-      //   $("<h3>")
-      //     .text(`${conflictKeys} have the same hands`)
-      //     .css("background", "white")
-      // );
+      console.log(`${conflictKeys} have the same hands`);
+      $("div.winner").append(
+        $("<h3>")
+          .text(`${conflictKeys} have the same hands`)
+          .css("background", "white")
+      );
       return conflictKeys;
     } else {
       console.log(`${bestPlayer} wins!`);
-      // $("div.winner").append(
-      //   $("<h3>")
-      //     .text(
-      //       `${bestPlayer} wins with a ${Object.keys(cardRanking).find(
-      //         (key) => cardRanking[key] === bestHandIndex
-      //       )}`
-      //     )
-      //     .css("background", "white")
-      // );
+      $("div.winner").append(
+        $("<h3>")
+          .text(
+            `${bestPlayer} wins with a ${Object.keys(cardRanking).find(
+              (key) => cardRanking[key] === bestHandIndex
+            )}`
+          )
+          .css("background", "white")
+      );
     }
   };
 
@@ -826,6 +835,7 @@ const addPlayers = () => {
     const $playerInput = $("<input>")
       .attr("type", "text")
       .attr("id", `player${i}Name`)
+      .addClass("playerInput")
       .attr("placeholder",`Player ${i}`);
     $playerForm.append($player).append($playerInput).append("&nbsp;");
     const $buyIn = $("<label>")
@@ -841,11 +851,12 @@ const addPlayers = () => {
       .append($("<br>"))
       .append($("<br>"));
   }
+
   $("#putOnYourPokerFace").show();
 };
 
 let blinds = 0;
-$("#submitButton").on(
+  $("#submitButton").on(
   "click",
   (repeatFunc = () => {
     let value = parseInt($("#blindValue").val());
@@ -882,42 +893,47 @@ const storeInitialData=()=>{
 
 const playerCardsObj = {};
 
+var index1=2;
+const gameSequence=["pre-flop","flop","turn","river"]
+var sequenceCounter=0;
 $("#putOnYourPokerFace").on("click", (e) => {
   e.preventDefault();
   storeInitialData();
   const data = run($("#numOfPlayers").val(), playerCardsObj, app.players);
   $("#settingPage").fadeOut("slow");
 
+  app["playerStats"]={};
+  app["gameStage"]=gameSequence[sequenceCounter];
+  for (let i=0;i<app.players.length;i++){
+    let player = app.players[i]
+    app.playerStats[player]={};
+    app.playerStats[player].needToAct=true
+    app.playerStats[player].stack=parseInt(app.playersStash[i])
+  }
+
   for (let players of app.players){
     createPlayerPage(players)
   }
 
-  result(data)
+  gameOn(index1);
 
-  // for (let i =0;i<app.players.length;i++){
-  //   gameOn(app.players[i])
-  // }
-  let index=0;
-  gameOn(index)
+  $(".showResult").on("click",()=>{result(data);
+  console.log(app)})
 });
 
 
-const gameOn=(index)=>{
-  let player=app.players[index];
+const gameOn=(index1)=>{
+  let player=app.players[index1];
   setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
   $(`[id="${player}playersCards"]`).on("mousedown",()=>{$(".hidden").show()})
   $(`[id="${player}playersCards"]`).on("mouseup",()=>{$(".hidden").hide()})
-  
-  $(`[id="${player}PageFoldBtn"]`).on("click", (e)=>{foldFunc(e, player,index)})
-  $(`[id="${player}PageRaiseBtn"]`).on("click", (e)=>{raiseFunc(e, player,index)})
-  $(`[id="${player}PageCallBtn"]`).on("click", (e)=>{callFunc(e, player,index)})
 }
 
 const createPlayerPage=(player)=>{
   $wrapper = $("<div>").attr("id",`${player}Page`).addClass("playerPages").hide()
   $wrapper.append($("<h1>").addClass("playersPage"))
   $wrapper.append($("<div>").attr("id",`${player}communityCards`))
-  $wrapper.append($("<div>").attr("id",`${player}playersCards`))
+  $wrapper.append($("<div>").attr("id",`${player}playersCards`).addClass("hideBtn"))
   $wrapper.append($("<div>").attr("id",`${player}commandButtons`))
   $("body").append($wrapper)
   
@@ -931,28 +947,106 @@ const createPlayerPage=(player)=>{
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").attr("id",`${player}PageRaiseBtn`).text("Raise!"))
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").css("margin-left","2em").attr("id",`${player}PageCallBtn`).text("Call"))
   $(`[id="${player}Page"]>h1`).text(player)
+
   $(`[id="${player}communityCards"]`).append($("<p>").text(playerCardsObj["Community Cards"]))
   $(`[id="${player}playersCards"]>.hidden`).append($("<p>").text(playerCardsObj[player].slice(0,2)))
+
+
+    $(`[id="${player}PageFoldBtn"]`).on("click", (e)=>{foldFunc(e,player)})
+    $(`[id="${player}PageRaiseBtn"]`).on("click", (e)=>{raiseFunc(e,player)})
+    $(`[id="${player}PageCallBtn"]`).on("click", (e)=>{callFunc(e,player)})
+  }
+  
+  const callFunc=(e,player)=>{
+    $(`[id="${player}Page"]`).hide("slow")
+    
+    index1++;
+    app.playerStats[player].needToAct=false
+    if (index1===parseInt(app.numOfPlayers)){
+      index1 = 0;
+    }
+    
+    if(!waitChecker()){
+      ++sequenceCounter
+      app.gameStage=gameSequence[sequenceCounter];
+      index1=0;
+      for(let player of Object.keys(app.playerStats)){
+        app.playerStats[player].needToAct=true
+      }
+      if(gameSequence[sequenceCounter]==="river"){
+        // result(data)
+      }
+    }
+    console.log(app.playerStats)
+    gameOn(index1);
+  }
+  
+  const foldFunc=(e,player)=>{
+      $(`[id="${player}Page"]`).hide("slow");
+      setTimeout(()=>{$(`[id="${player}Page"]`).remove()},600);
+      delete playerCardsObj[player];
+      delete app.playerStats[player];
+      app.players.splice(index1,1)
+      app.numOfPlayers=parseInt(app.numOfPlayers)-1
+      if (index1===app.numOfPlayers){
+    index1 =0;
+  }
+  
+  if(!waitChecker()){
+    ++sequenceCounter
+    app.gameStage=gameSequence[sequenceCounter];
+    index1=0;
+    for(let player of Object.keys(app.playerStats)){
+      app.playerStats[player].needToAct=true
+    }
+    if(gameSequence[sequenceCounter]==="river"){
+      // result(data)
+    }
+  }
+  console.log(app.playerStats)
+  gameOn(index1);
 }
 
-const foldFunc=(e,player,index)=>{
-  alert("fold!");
-  $(`[id="${player}Page"]`).hide("slow");
-  setTimeout(()=>{$(`[id="${player}Page"]`).remove()},600);
-  delete playerCardsObj[player];
-  index++;
-  // gameOn(app.players[1])
-  gameOn(index);
-}
-const raiseFunc=(e,player,index)=>{
-  alert("raise!")
-  $(`[id="${player}Page"]`).hide("slow")
-  index++;
-  gameOn(index);
-}
-const callFunc=(e,player,index)=>{
-  alert("call!")
-  $(`[id="${player}Page"]`).hide("slow")
-  index++;
-  gameOn(index);
+const raiseFunc=(e,player)=>{
+    $(`[id="${player}Page"]`).hide("slow")
+    
+    for(let key of Object.keys(app.playerStats)){
+      if(key!==player){
+        app.playerStats[key].needToAct=true
+      } else {
+        app.playerStats[key].needToAct=false
+      }
+    }
+    
+    index1++;
+    if (index1===parseInt(app.numOfPlayers)){
+      index1 =0;
+    }
+
+  //   if(!waitChecker()){
+  //     ++sequenceCounter
+  //     app.gameStage=gameSequence[sequenceCounter];
+  //     index1=0;
+  //     for(let player of Object.keys(app.playerStats)){
+  //       app.playerStats[player].needToAct=true
+  //     }
+  //     if(gameSequence[sequenceCounter]==="river"){
+  //       // result(data)
+  //     }
+  //   }
+  //   console.log(app.playerStats)
+  //   gameOn(index1);
+  }
+  
+
+const waitChecker=()=>{
+  let checker=false
+  for(let player of Object.keys(app.playerStats)){
+    if(app.playerStats[player].needToAct){
+      checker=true
+      break;
+    }
+  }
+  console.log(checker)
+  return checker;
 }

@@ -5,6 +5,10 @@ body {
   background-size: cover;
 }
 
+#startpage > h1 {
+  font-size: 5em;
+}
+
 #startpage {
   margin: 0px auto;
   text-align: center;
@@ -36,6 +40,15 @@ h1.playersPage {
 
 .click-to-start {
   font-size: 2em;
+  cursor: pointer;
+  width: 15%;
+  margin: 0px auto;
+}
+
+.hideBtn {
+  cursor: pointer;
+  width: 8%;
+  margin: 0px auto;
 }
 
 .card {
@@ -53,4 +66,20 @@ input[type="text"] {
   padding: 6px 10px;
   margin: 8px 8px 8px 0px;
   box-sizing: border-box;
+}
+
+input.playerInput {
+  width: 15%;
+  padding: 6px 10px;
+  margin: 8px 8px 8px 0px;
+  box-sizing: border-box;
+}
+
+footer {
+  position: absolute;
+  margin: 0px auto;
+  text-align: center;
+  bottom: 0%;
+  color: white;
+  cursor: default;
 }
