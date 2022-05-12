@@ -86,15 +86,15 @@ const run = (players, playerCardsObj, playerNames) => {
       "Q ♢",
       "K ♢",
     ];
-    playerCardsObj["Player 3"] = [
-      "2 ♠",
-      "3 ♢",
-      "9 ♣",
-      "J ♣",
-      "A ♣",
-      "Q ♢",
-      "K ♢",
-    ];
+    // playerCardsObj["Player 3"] = [
+    //   "2 ♠",
+    //   "3 ♢",
+    //   "9 ♣",
+    //   "J ♣",
+    //   "A ♣",
+    //   "Q ♢",
+    //   "K ♢",
+    // ];
   };
   // cardManipulate();
 
@@ -319,16 +319,18 @@ const run = (players, playerCardsObj, playerNames) => {
           }
         };
         checkDups();
-
+        
         if (dir.includes("trips") && dir.includes("onePair")) {
           playerCardsObj[key].statements.push("fullHouse");
         }
       }
     }
   };
-
+  
   pairTripsQuads();
+}
 
+const result=()=>{
   const cardRanking = {
     highCard: 1,
     onePair: 2,
@@ -388,10 +390,7 @@ const run = (players, playerCardsObj, playerNames) => {
       }
     }
   }
-  return [bestHandIndex,bestPlayer]
-}
 
-const result=(data)=>{
   const decider = (bestHandIndex, bestPlayer) => {
     //declare winner
     let counter = 0;
@@ -404,7 +403,7 @@ const result=(data)=>{
     }
     if (counter > 1) {
       console.log(`${conflictKeys} have the same hands`);
-      $("div.winner").append(
+      $("div.result").append(
         $("<h3>")
           .text(`${conflictKeys} have the same hands`)
           .css("background", "white")
@@ -412,7 +411,7 @@ const result=(data)=>{
       return conflictKeys;
     } else {
       console.log(`${bestPlayer} wins!`);
-      $("div.winner").append(
+      $("div.result").append(
         $("<h3>")
           .text(
             `${bestPlayer} wins with a ${Object.keys(cardRanking).find(
@@ -424,8 +423,8 @@ const result=(data)=>{
     }
   };
 
-  let bestHandIndex = data[0]
-  let bestPlayer = data[1]
+  // let bestHandIndex = data[0]
+  // let bestPlayer = data[1]
   const conflictInfo = decider(bestHandIndex, bestPlayer);
   console.log(playerCardsObj);
 
@@ -494,33 +493,6 @@ const result=(data)=>{
       return winner;
     }
   }
-
-  // const checkTopRepeats2 = (num) => {
-  //   let maxSameNumCards = { value: 0, player: [] };
-  //   let counter = 1;
-  //   for (let playerKey of conflictInfo) {
-  //     const playerDups = playerCardsObj[playerKey].sortedHand;
-  //     const reversedKeys = Object.keys(playerDups).reverse();
-  //     let highestKey = 0;
-  //     for (let key of reversedKeys) {
-  //       if (playerDups[key] === num) {
-  //         highestKey = parseInt(key);
-  //         delete playerDups[key];
-  //         break;
-  //       }
-  //     }
-
-  //     if (maxSameNumCards.value === highestKey) {
-  //       counter++;
-  //     } else if (maxSameNumCards.value < highestKey) {
-  //       maxSameNumCards.value = highestKey;
-  //       maxSameNumCards.player = playerKey;
-  //     }
-  //   }
-
-  //   console.log(maxSameNumCards, counter);
-  //   return [maxSameNumCards, counter];
-  // };
 
   const checkTopRepeats = (num) => {
     let maxSameNumCards = { value: 0, player: [] };
@@ -750,11 +722,14 @@ const result=(data)=>{
   }
 
   const printer = (winner) => {
-    if (winner && winner !== "draw") {
-      // $("div.win
+    if (winner!=undefined && winner !== "draw") {
+      $("div.result").append($("<h3>").text(`${winner} won!`))
+    } else {
+      $("div.result").append($("<h3>").text(`It's a draw!`))
     }
   };
 
+  let drawArr=[];
   if (conflictInfo) {
     switch (bestHandIndex) {
       case 1:
@@ -784,27 +759,35 @@ const result=(data)=>{
       default:
         alert("Wh0t mate");
     }
-  }
 
-  const simplifyObj = () => {
-    for (let [key] of Object.entries(playerCardsObj)) {
-      for (let [key2] of Object.entries(playerCardsObj[key])) {
-        if (
-          key2 === "0" ||
-          key2 === "1" ||
-          key2 === "2" ||
-          key2 === "3" ||
-          key2 === "4" ||
-          key2 === "5" ||
-          key2 === "6"
-        ) {
-          continue;
-        }
-        delete playerCardsObj[key][key2];
-      }
+    // console.log(drawArr)
+  }
+  $("div.playerPages").hide()
+  for (var variableKey in playerCardsObj){
+    if (playerCardsObj.hasOwnProperty(variableKey)){
+        delete playerCardsObj[variableKey];
     }
-  };
-  simplifyObj();
+  }
+  run($("#numOfPlayers").val(), playerCardsObj, app.players)
+  // const simplifyObj = () => {
+  //   for (let [key] of Object.entries(playerCardsObj)) {
+  //     for (let [key2] of Object.entries(playerCardsObj[key])) {
+  //       if (
+  //         key2 === "0" ||
+  //         key2 === "1" ||
+  //         key2 === "2" ||
+  //         key2 === "3" ||
+  //         key2 === "4" ||
+  //         key2 === "5" ||
+  //         key2 === "6"
+  //       ) {
+  //         continue;
+  //       }
+  //       delete playerCardsObj[key][key2];
+  //     }
+  //   }
+  // };
+  // simplifyObj();
 };
 
 $(".click-to-start").mouseenter(() => {
@@ -919,19 +902,24 @@ const createPlayerPage=(player)=>{
     $(`[id="${player}PageCallBtn"]`).on("click", (e)=>{callFunc(e,player)})
   }
 
-const playerCardsObj = {};
+let playerCardsObj = {};
 
 var index1=2;
 const gameSequence=["pre-flop","flop","turn","river"]
 var sequenceCounter=0;
-var dataGlobal;
-$("#putOnYourPokerFace").on("click", (e) => {
+// var dataGlobal;
+
+const superFunc = (e) => {
   e.preventDefault();
   storeInitialData();
-  const data = run($("#numOfPlayers").val(), playerCardsObj, app.players);
-  dataGlobal=data
+  run($("#numOfPlayers").val(), playerCardsObj, app.players);
+  // dataGlobal=data
+  
   $("#settingPage").fadeOut("slow");
-
+  if(parseInt(app.numOfPlayers)===2){
+    index1=1;
+  }
+  
   app["playerStats"]={};
   app["gameStage"]=gameSequence[sequenceCounter];
   for (let i=0;i<app.players.length;i++){
@@ -940,17 +928,18 @@ $("#putOnYourPokerFace").on("click", (e) => {
     app.playerStats[player].needToAct=true
     app.playerStats[player].stack=parseInt(app.playersStash[i])
   }
-
+  
   for (let players of app.players){
     createPlayerPage(players)
   }
-
+  
   gameOn(index1);
-
+  
   $(".showResult").on("click",()=>{
-    result(data);
+    result();
   })
-});
+};
+$("#putOnYourPokerFace").on("click", superFunc)
 
 const gameOn=(index1)=>{
   let player=app.players[index1];
@@ -960,16 +949,19 @@ const gameOn=(index1)=>{
 }
 
   
-  const callFunc=(e,player)=>{
-    $(`[id="${player}Page"]`).hide("slow")
-    
-    index1++;
-    app.playerStats[player].needToAct=false
+const callFunc=(e,player)=>{
+  $(`[id="${player}Page"]`).hide("slow")
+  
+  index1++;
+  app.playerStats[player].needToAct=false
     if (index1===parseInt(app.numOfPlayers)){
       index1 = 0;
     }
     
     if(!waitChecker()){
+      if(sequenceCounter === 3){
+        result()
+      }
       ++sequenceCounter
       app.gameStage=gameSequence[sequenceCounter];
       index1=0;
@@ -1005,6 +997,9 @@ const gameOn=(index1)=>{
   }
   
   if(!waitChecker()){
+    if(sequenceCounter === 3){
+      result()
+    }
     ++sequenceCounter
     app.gameStage=gameSequence[sequenceCounter];
     index1=0;
@@ -1043,18 +1038,6 @@ const raiseFunc=(e,player)=>{
       index1 =0;
     }
 
-  //   if(!waitChecker()){
-  //     ++sequenceCounter
-  //     app.gameStage=gameSequence[sequenceCounter];
-  //     index1=0;
-  //     for(let player of Object.keys(app.playerStats)){
-  //       app.playerStats[player].needToAct=true
-  //     }
-  //     if(gameSequence[sequenceCounter]==="river"){
-  //       // result(data)
-  //     }
-  //   }
-  //   console.log(app.playerStats)
     gameOn(index1);
   }
   

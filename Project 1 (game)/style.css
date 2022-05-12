@@ -9,6 +9,13 @@ body {
   font-size: 5em;
 }
 
+.result {
+  font-size: 5em;
+  background-color: white;
+  margin: 0px auto;
+  text-align: center;
+}
+
 #startpage {
   margin: 0px auto;
   text-align: center;
