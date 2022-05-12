@@ -873,6 +873,7 @@ let blinds = 0;
 
 app.players=[]
 app.playersStash=[]
+app.pot=0;
 const storeInitialData=()=>{
   for (let i = 1; i <= app.numOfPlayers; i++){
     if($(`#player${i}Name`).val()===''){
@@ -888,45 +889,6 @@ const storeInitialData=()=>{
     }
   }
   console.log(app)
-}
-
-
-const playerCardsObj = {};
-
-var index1=2;
-const gameSequence=["pre-flop","flop","turn","river"]
-var sequenceCounter=0;
-$("#putOnYourPokerFace").on("click", (e) => {
-  e.preventDefault();
-  storeInitialData();
-  const data = run($("#numOfPlayers").val(), playerCardsObj, app.players);
-  $("#settingPage").fadeOut("slow");
-
-  app["playerStats"]={};
-  app["gameStage"]=gameSequence[sequenceCounter];
-  for (let i=0;i<app.players.length;i++){
-    let player = app.players[i]
-    app.playerStats[player]={};
-    app.playerStats[player].needToAct=true
-    app.playerStats[player].stack=parseInt(app.playersStash[i])
-  }
-
-  for (let players of app.players){
-    createPlayerPage(players)
-  }
-
-  gameOn(index1);
-
-  $(".showResult").on("click",()=>{result(data);
-  console.log(app)})
-});
-
-
-const gameOn=(index1)=>{
-  let player=app.players[index1];
-  setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
-  $(`[id="${player}playersCards"]`).on("mousedown",()=>{$(".hidden").show()})
-  $(`[id="${player}playersCards"]`).on("mouseup",()=>{$(".hidden").hide()})
 }
 
 const createPlayerPage=(player)=>{
@@ -948,7 +910,7 @@ const createPlayerPage=(player)=>{
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").css("margin-left","2em").attr("id",`${player}PageCallBtn`).text("Call"))
   $(`[id="${player}Page"]>h1`).text(player)
 
-  $(`[id="${player}communityCards"]`).append($("<p>").text(playerCardsObj["Community Cards"]))
+  $(`[id="${player}communityCards"]`).append($("<p>").addClass("community").text(playerCardsObj["Community Cards"].slice(0,0)))
   $(`[id="${player}playersCards"]>.hidden`).append($("<p>").text(playerCardsObj[player].slice(0,2)))
 
 
@@ -956,6 +918,47 @@ const createPlayerPage=(player)=>{
     $(`[id="${player}PageRaiseBtn"]`).on("click", (e)=>{raiseFunc(e,player)})
     $(`[id="${player}PageCallBtn"]`).on("click", (e)=>{callFunc(e,player)})
   }
+
+const playerCardsObj = {};
+
+var index1=2;
+const gameSequence=["pre-flop","flop","turn","river"]
+var sequenceCounter=0;
+var dataGlobal;
+$("#putOnYourPokerFace").on("click", (e) => {
+  e.preventDefault();
+  storeInitialData();
+  const data = run($("#numOfPlayers").val(), playerCardsObj, app.players);
+  dataGlobal=data
+  $("#settingPage").fadeOut("slow");
+
+  app["playerStats"]={};
+  app["gameStage"]=gameSequence[sequenceCounter];
+  for (let i=0;i<app.players.length;i++){
+    let player = app.players[i]
+    app.playerStats[player]={};
+    app.playerStats[player].needToAct=true
+    app.playerStats[player].stack=parseInt(app.playersStash[i])
+  }
+
+  for (let players of app.players){
+    createPlayerPage(players)
+  }
+
+  gameOn(index1);
+
+  $(".showResult").on("click",()=>{
+    result(data);
+  })
+});
+
+const gameOn=(index1)=>{
+  let player=app.players[index1];
+  setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
+  $(`[id="${player}playersCards"]`).on("mousedown",()=>{$(".hidden").show()})
+  $(`[id="${player}playersCards"]`).on("mouseup",()=>{$(".hidden").hide()})
+}
+
   
   const callFunc=(e,player)=>{
     $(`[id="${player}Page"]`).hide("slow")
@@ -973,11 +976,20 @@ const createPlayerPage=(player)=>{
       for(let player of Object.keys(app.playerStats)){
         app.playerStats[player].needToAct=true
       }
-      if(gameSequence[sequenceCounter]==="river"){
-        // result(data)
+
+      switch(sequenceCounter){
+        case 1:
+        $(".community").text(playerCardsObj["Community Cards"].slice(0,3));
+        break;
+        case 2:
+        $(".community").text(playerCardsObj["Community Cards"].slice(0,4));
+        break;
+        case 3:
+        $(".community").text(playerCardsObj["Community Cards"]);
+        break;
       }
     }
-    console.log(app.playerStats)
+    // console.log(app.playerStats)
     gameOn(index1);
   }
   
@@ -999,11 +1011,19 @@ const createPlayerPage=(player)=>{
     for(let player of Object.keys(app.playerStats)){
       app.playerStats[player].needToAct=true
     }
-    if(gameSequence[sequenceCounter]==="river"){
-      // result(data)
+    switch(sequenceCounter){
+      case 1:
+      $(".community").text(playerCardsObj["Community Cards"].slice(0,3));
+      break;
+      case 2:
+      $(".community").text(playerCardsObj["Community Cards"].slice(0,4));
+      break;
+      case 3:
+      $(".community").text(playerCardsObj["Community Cards"]);
+      break;
     }
   }
-  console.log(app.playerStats)
+  // console.log(app.playerStats)
   gameOn(index1);
 }
 
@@ -1035,7 +1055,7 @@ const raiseFunc=(e,player)=>{
   //     }
   //   }
   //   console.log(app.playerStats)
-  //   gameOn(index1);
+    gameOn(index1);
   }
   
 
@@ -1047,6 +1067,6 @@ const waitChecker=()=>{
       break;
     }
   }
-  console.log(checker)
+  // console.log(checker)
   return checker;
 }
