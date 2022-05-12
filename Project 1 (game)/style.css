@@ -29,8 +29,9 @@ body {
   font-family: "Bebas Neue", cursive;
 }
 
-h1 {
-  font-size: 6em;
+h1.playersPage {
+  font-size: 4em;
+  font-family: "Dancing Script", cursive;
 }
 
 .click-to-start {
@@ -39,4 +40,17 @@ h1 {
 
 .card {
   background-color: beige;
+}
+
+.playerPages {
+  margin: 0px auto;
+  text-align: center;
+  background-color: blanchedalmond;
+}
+
+input[type="text"] {
+  width: 7%;
+  padding: 6px 10px;
+  margin: 8px 8px 8px 0px;
+  box-sizing: border-box;
 }

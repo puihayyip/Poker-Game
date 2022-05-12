@@ -182,7 +182,7 @@ const run = (players, playerCardsObj, playerNames) => {
       playerCardsObj[key].isFlush.push(flushArr);
     };
 
-    for (const [key, value] of Object.entries(cardObj.Suits)) {
+    for (const [key] of Object.entries(cardObj.Suits)) {
       if (key !== "Community Cards") {
         //check if there's a flush and update playerCardsObj
         let countDiamond = 0;
@@ -334,7 +334,7 @@ const run = (players, playerCardsObj, playerNames) => {
 
   let bestHandIndex = 0;
   let bestPlayer = 0;
-  for (let [key, value] of Object.entries(playerCardsObj)) {
+  for (let [key] of Object.entries(playerCardsObj)) {
     //final hand of player
     if (key !== "Community Cards") {
       if (playerCardsObj[key].statements.includes("quads")) {
@@ -379,7 +379,10 @@ const run = (players, playerCardsObj, playerNames) => {
       }
     }
   }
+  return [bestHandIndex,bestPlayer]
+}
 
+const result=(data)=>{
   const decider = (bestHandIndex, bestPlayer) => {
     //declare winner
     let counter = 0;
@@ -412,6 +415,8 @@ const run = (players, playerCardsObj, playerNames) => {
     }
   };
 
+  let bestHandIndex = data[0]
+  let bestPlayer = data[1]
   const conflictInfo = decider(bestHandIndex, bestPlayer);
   console.log(playerCardsObj);
 
@@ -790,7 +795,7 @@ const run = (players, playerCardsObj, playerNames) => {
       }
     }
   };
-  // simplifyObj();
+  simplifyObj();
 };
 
 $(".click-to-start").mouseenter(() => {
@@ -865,7 +870,7 @@ const storeInitialData=()=>{
       app.players.push($(`#player${i}Name`).val())
     }
 
-    if($(`#player${i}Name`).val()===''){
+    if($(`#player${i}BuyIn`).val()===''){
       app.playersStash.push($(`#player${i}BuyIn`).attr('placeholder'))
     } else{
       app.playersStash.push($(`#player${i}BuyIn`).val())
@@ -876,15 +881,78 @@ const storeInitialData=()=>{
 
 
 const playerCardsObj = {};
+
 $("#putOnYourPokerFace").on("click", (e) => {
   e.preventDefault();
   storeInitialData();
-  run($("#numOfPlayers").val(), playerCardsObj, app.players);
+  const data = run($("#numOfPlayers").val(), playerCardsObj, app.players);
   $("#settingPage").fadeOut("slow");
-  $(".card").show()
-  gameOn();
+
+  for (let players of app.players){
+    createPlayerPage(players)
+  }
+
+  result(data)
+
+  // for (let i =0;i<app.players.length;i++){
+  //   gameOn(app.players[i])
+  // }
+  let index=0;
+  gameOn(index)
 });
 
-const gameOn=()=>{
-  console.log("Testing")
+
+const gameOn=(index)=>{
+  let player=app.players[index];
+  setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
+  $(`[id="${player}playersCards"]`).on("mousedown",()=>{$(".hidden").show()})
+  $(`[id="${player}playersCards"]`).on("mouseup",()=>{$(".hidden").hide()})
+  
+  $(`[id="${player}PageFoldBtn"]`).on("click", (e)=>{foldFunc(e, player,index)})
+  $(`[id="${player}PageRaiseBtn"]`).on("click", (e)=>{raiseFunc(e, player,index)})
+  $(`[id="${player}PageCallBtn"]`).on("click", (e)=>{callFunc(e, player,index)})
+}
+
+const createPlayerPage=(player)=>{
+  $wrapper = $("<div>").attr("id",`${player}Page`).addClass("playerPages").hide()
+  $wrapper.append($("<h1>").addClass("playersPage"))
+  $wrapper.append($("<div>").attr("id",`${player}communityCards`))
+  $wrapper.append($("<div>").attr("id",`${player}playersCards`))
+  $wrapper.append($("<div>").attr("id",`${player}commandButtons`))
+  $("body").append($wrapper)
+  
+  $(`[id="${player}communityCards"]`).append($("<p>").text("Community Cards"))
+  $(`[id="${player}playersCards"]`).append($("<p>").text("Players Cards"))
+  $(`[id="${player}playersCards"]`).append($("<div>").addClass("hidden").hide())
+  $(`[id="${player}commandButtons"]`).append($("<form>").attr("id",`${player}commandBtn`))
+  $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").attr("id",`${player}PageFoldBtn`).text("Fold"))
+  $(`[id="${player}commandBtn"]`).append($("<label>").attr("for","raiseAmount").css("margin-left","2em").text("Raise: $"))
+  $(`[id="${player}commandBtn"]`).append($("<input>").attr("type","text"))
+  $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").attr("id",`${player}PageRaiseBtn`).text("Raise!"))
+  $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").css("margin-left","2em").attr("id",`${player}PageCallBtn`).text("Call"))
+  $(`[id="${player}Page"]>h1`).text(player)
+  $(`[id="${player}communityCards"]`).append($("<p>").text(playerCardsObj["Community Cards"]))
+  $(`[id="${player}playersCards"]>.hidden`).append($("<p>").text(playerCardsObj[player].slice(0,2)))
+}
+
+const foldFunc=(e,player,index)=>{
+  alert("fold!");
+  $(`[id="${player}Page"]`).hide("slow");
+  setTimeout(()=>{$(`[id="${player}Page"]`).remove()},600);
+  delete playerCardsObj[player];
+  index++;
+  // gameOn(app.players[1])
+  gameOn(index);
+}
+const raiseFunc=(e,player,index)=>{
+  alert("raise!")
+  $(`[id="${player}Page"]`).hide("slow")
+  index++;
+  gameOn(index);
+}
+const callFunc=(e,player,index)=>{
+  alert("call!")
+  $(`[id="${player}Page"]`).hide("slow")
+  index++;
+  gameOn(index);
 }
