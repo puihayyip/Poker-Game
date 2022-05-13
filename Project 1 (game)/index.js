@@ -856,14 +856,14 @@ const addPlayers = () => {
 let blinds = 0;
   $("#submitButton").on(
   "click",
-  (repeatFunc = () => {
+  (repeatFuncBlinds = () => {
     let value = parseInt($("#blindValue").val());
     if (value && value <= 1000 && value >= 1) {
       blinds = $("#blindValue").val();
     } else {
       alert("Please enter the fields correctly");
       $("#blindValue").val()=0;
-      repeatFunc();
+      repeatFuncBlinds();
     }
     addPlayers();
   })
@@ -979,16 +979,16 @@ const gameOn=(index1)=>{
 const callFunc=(e,player)=>{
   $(`[id="${player}Page"]`).hide("slow")
   
+  app.playerStats[app.players[index1]].stack-=(app.betSize-app.playerStats[app.players[index1]].previousBet)
+  app.pot+=(app.betSize-app.playerStats[app.players[index1]].previousBet)
+  console.log(app.playerStats)
+  
   index1++;
   app.playerStats[player].needToAct=false
     if (index1===parseInt(app.numOfPlayers)){
       index1 = 0;
     }
     
-    app.playerStats[app.players[index1]].stack-=(app.betSize-app.playerStats[app.players[index1]].previousBet)
-    app.pot+=(app.betSize-app.playerStats[app.players[index1]].previousBet)
-    console.log(app.playerStats)
-
     let gameEnded=turnEnd();
     if(!gameEnded){
       gameOn(index1);
@@ -1016,7 +1016,22 @@ const callFunc=(e,player)=>{
 }
 
 const raiseFunc=(e,player)=>{
-    $(`[id="${player}Page"]`).hide("slow")
+    let bet=parseInt($(`[id="${player}PageRaiseAmt"]`).val());
+      if (bet && bet >= 2*app.betSize) {
+        app.playerStats[app.players[index1]].previousBet=bet
+        app.betSize=bet
+        app.playerStats[app.players[index1]].stack-=app.betSize
+        app.pot+=app.betSize
+        console.log(app.playerStats)
+        $(`[id="${player}PageRaiseAmt"]`).val('')
+      } else {
+        alert("Wrong input in field or bet is too small \n Called previous bet")
+        $(`[id="${player}PageRaiseAmt"]`).val('')
+        callFunc(e,player)
+        return;
+      }
+
+      $(`[id="${player}Page"]`).hide("slow")
     
     for(let key of Object.keys(app.playerStats)){
       if(key!==player){
@@ -1026,18 +1041,24 @@ const raiseFunc=(e,player)=>{
       }
     }
     
+    
     index1++;
     if (index1===parseInt(app.numOfPlayers)){
       index1 =0;
     }
 
 
-    app.playerStats[app.players[index1]].previousBet=parseInt($(`[id="${player}PageRaiseAmt"]`).val())
-    app.betSize=parseInt($(`[id="${player}PageRaiseAmt"]`).val())
-    app.playerStats[app.players[index1]].stack-=app.betSize
-    app.pot+=app.betSize
-    console.log(app.playerStats)
-    $(`[id="${player}PageRaiseAmt"]`).val('')
+
+
+
+
+
+
+
+
+
+
+
     gameOn(index1);
   }
   
