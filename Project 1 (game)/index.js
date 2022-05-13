@@ -750,7 +750,7 @@ const result=(onlyWinner)=>{
       $("div.result").append($("<h3>").text(`It's a draw!`))
       console.log(playerCardsObj)
       $(".showStackSize").css("display","flex")
-      $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
+      $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[winner].stack}`)
     }
   };
 
@@ -795,7 +795,7 @@ const result=(onlyWinner)=>{
   // }
 $(".result").show()
 
-  run($("#numOfPlayers").val(), playerCardsObj, app.players)
+  // run($("#numOfPlayers").val(), playerCardsObj, app.players)
   const simplifyObj = () => {
     for (let [key] of Object.entries(playerCardsObj)) {
       for (let [key2] of Object.entries(playerCardsObj[key])) {
@@ -839,7 +839,7 @@ const app={};
 
 const addPlayers = () => {
   $("#submitButton").hide();
-  app.numOfPlayers = $("#numOfPlayers").val();
+  app.numOfPlayers = parseInt($("#numOfPlayers").val());
   const $playerForm = $("form.playerDetails");
   for (let i = 1; i <= app.numOfPlayers; i++) {
     const $player = $("<label>")
@@ -953,7 +953,7 @@ const superFunc = (e) => {
   run($("#numOfPlayers").val(), playerCardsObj, app.players);
   
   $("#settingPage").fadeOut("slow");
-  if(parseInt(app.numOfPlayers)===2){
+  if(app.numOfPlayers===2){
     index1=1;
   }
   
@@ -1003,15 +1003,15 @@ const callFunc=(e,player)=>{
     
     app.playerStats[app.players[index1]].stack-=(app.betSize-app.playerStats[app.players[index1]].previousBet)
     app.pot+=(app.betSize-app.playerStats[app.players[index1]].previousBet)
-    console.log(app.playerStats)
+    console.log(player,"call",app,"-------------------------")
     
-    index1++;
     app.playerStats[player].needToAct=false
-      if (index1===parseInt(app.numOfPlayers)){
+    
+    let gameEnded=turnEnd();
+    index1++;
+      if (index1===app.numOfPlayers){
         index1 = 0;
       }
-      
-      let gameEnded=turnEnd();
       if(!gameEnded){
         $(".showStackSize").css("display","flex")
         $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
@@ -1023,26 +1023,28 @@ const callFunc=(e,player)=>{
     }
   }
   
-  const foldFunc=(e,player)=>{
-      $(`[id="${player}Page"]`).hide("slow");
-      setTimeout(()=>{$(`[id="${player}Page"]`).remove()},600);
-      delete playerCardsObj[player];
-      delete app.playerStats[player];
-      app.players.splice(index1,1)
-      app.numOfPlayers=parseInt(app.numOfPlayers)-1
-      if (index1===app.numOfPlayers){
-      index1 =0;
-    }
-    if(app.players.length===1){
-      app.playerStats[app.players[index1]].needToAct=false
-    }
-  
+const foldFunc=(e,player)=>{
+  $(`[id="${player}Page"]`).hide("slow");
+  setTimeout(()=>{$(`[id="${player}Page"]`).remove()},600);
+  delete playerCardsObj[player];
+  // delete app.playerStats[player];
+  app.players.splice(index1,1)
+  app.numOfPlayers-=1
+  if (index1===app.numOfPlayers){
+    index1 = 0;
+  }
+  if(app.numOfPlayer===1){
+    app.playerStats[player].needToAct=false
+  }
+
+
+  console.log(player,"fold",app,"-------------------------")
   let gameEnded=turnEnd();
-    if(!gameEnded){
-      $(".showStackSize").css("display","flex")
-      $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
-      gameOn(index1);
-    }
+  if(!gameEnded){
+    $(".showStackSize").css("display","flex")
+    $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
+    gameOn(index1);
+  }
 }
 
 const raiseFunc=(e,player)=>{
@@ -1053,7 +1055,7 @@ const raiseFunc=(e,player)=>{
         app.betSize=bet
         app.playerStats[app.players[index1]].stack-=app.betSize
         app.pot+=app.betSize
-        console.log(app.playerStats)
+        console.log(player,"raise",app,"-------------------------")
         $(`[id="${player}PageRaiseAmt"]`).val('')
       } else {
         alert("Wrong input in field or bet is too small \n Called previous bet")
@@ -1064,16 +1066,17 @@ const raiseFunc=(e,player)=>{
 
       $(`[id="${player}Page"]`).hide("slow")
     
-    for(let key of Object.keys(app.playerStats)){
-      if(key!==player){
-        app.playerStats[key].needToAct=true
+    for(let Player of app.players){
+      if(Player===player){
+        app.playerStats[Player].needToAct=false
+        console.log(player,"check",app,"-------------------------")
       } else {
-        app.playerStats[key].needToAct=false
+        app.playerStats[Player].needToAct=true
       }
     }
     
     index1++;
-    if (index1===parseInt(app.numOfPlayers)){
+    if (index1===app.numOfPlayers){
       index1 =0;
     }
     $(".showStackSize").css("display","flex")
@@ -1091,10 +1094,12 @@ const checkFunc=(e,player)=>{
       $(`[id="${player}Page"]`).hide("slow")
     index1++;
     app.playerStats[player].needToAct=false
-    if (index1===parseInt(app.numOfPlayers)){
+    if (index1===app.numOfPlayers){
       index1 = 0;
     }
     
+    console.log(player,"check",app)
+
     let gameEnded=turnEnd();
     if(!gameEnded){
       $(".showStackSize").css("display","flex")
@@ -1106,10 +1111,10 @@ const checkFunc=(e,player)=>{
   }
 
 const waitChecker=()=>{
-  let checker=false
-  for(let player of Object.keys(app.playerStats)){
+  let checker=true
+  for(let player of app.players){
     if(app.playerStats[player].needToAct){
-      checker=true
+      checker=false
       break;
     }
   }
@@ -1117,29 +1122,28 @@ const waitChecker=()=>{
 }
 
 const turnEnd=()=>{
-  if(!waitChecker()){
-    if(app.players.length===1){
+  if(waitChecker()){
+    if(app.numOfPlayer===1){ ////////Game end checker
       result(true)
       for(let player of Object.keys(app.players)){
         $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
       }
       return true
-    }else if(sequenceCounter === 3){
-      console.log("running")
+    }else if(app.numOfPlayer>1&&sequenceCounter === 3){
       result(false)
-      return true
       for(let player of Object.keys(app.players)){
         $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
       }
+      return true
     }
-    ++sequenceCounter
     app.gameStage=gameSequence[sequenceCounter];
     index1=0;
     app.betSize=0
-    for(let player of Object.keys(app.playerStats)){
+    for(let player of app.players){
       app.playerStats[player].needToAct=true
       app.playerStats[player].previousBet=0
     }
+    ++sequenceCounter
     switch(sequenceCounter){
       case 1:
         setTimeout(()=>{
