@@ -30,9 +30,9 @@ body {
   /* border: 1px solid red; */
   /* background-color: turquoise; */
   position: relative;
-  top: 300px;
+  top: 200px;
   font-family: "Poker", sans-serif;
-  width: 100px;
+  width: 500px;
 }
 
 #settingPage {
@@ -55,7 +55,7 @@ h1.playersPage {
 .click-to-start {
   font-size: 2em;
   cursor: pointer;
-  width: 15%;
+  width: 50%;
   margin: 0px auto;
 }
 
@@ -122,4 +122,34 @@ p.playersPage {
 
 p.community .hidden > p .hideBtn {
   margin: 5px;
+}
+
+/* .showStackSize {
+  background-color: #333;
+  overflow: hidden;
+  position: fixed;
+  margin: auto 0%;
+  bottom: 0;
+  width: 100%;
+} */
+
+.showStackSize {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.showStackSize h2 {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 13px;
 }

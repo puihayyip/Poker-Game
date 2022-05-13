@@ -403,11 +403,11 @@ const result=(onlyWinner)=>{
     }
     if (counter > 1) {
       console.log(`${conflictKeys} have the same hands`);
-      $("div.result").append(
-        $("<h3>")
-          .text(`${conflictKeys} have the same hands`)
-          .css("background", "white")
-      );
+      // $("div.result").append(
+      //   $("<h3>")
+      //     .text(`${conflictKeys} have the same hands`)
+      //     .css("background", "white")
+      // );
       return conflictKeys;
     } else if(onlyWinner){
       // console.log(`${bestPlayer} wins!`);
@@ -419,6 +419,9 @@ const result=(onlyWinner)=>{
           )
           .css("background", "white")
       );
+      $(".showStackSize").css("display","flex")
+      app.playerStats[bestPlayer].stack+=app.pot
+      $(`[id="${bestPlayer}stack"]`).text(`${bestPlayer}: $${app.playerStats[bestPlayer].stack}`)
     } else if(counter===1){
       // console.log(`${bestPlayer} wins!`);
       console.log(playerCardsObj)
@@ -430,7 +433,11 @@ const result=(onlyWinner)=>{
             )}`
           )
           .css("background", "white")
+          .css("font-size","0.9em")
       );
+      $(".showStackSize").css("display","flex")
+      app.playerStats[bestPlayer].stack+=app.pot
+      $(`[id="${bestPlayer}stack"]`).text(`${bestPlayer}: $${app.playerStats[bestPlayer].stack}`)
     }
   };
 
@@ -736,9 +743,14 @@ const result=(onlyWinner)=>{
     if (winner!=undefined && winner !== "draw") {
       $("div.result").append($("<h3>").text(`${winner} won!`))
       console.log(playerCardsObj)
+      $(".showStackSize").css("display","flex")
+      app.playerStats[winner].stack+=app.pot
+      $(`[id="${winner}stack"]`).text(`${winner}: $${app.playerStats[winner].stack}`)
     } else {
       $("div.result").append($("<h3>").text(`It's a draw!`))
       console.log(playerCardsObj)
+      $(".showStackSize").css("display","flex")
+      $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
     }
   };
 
@@ -783,27 +795,30 @@ const result=(onlyWinner)=>{
   // }
 $(".result").show()
 
-  // run($("#numOfPlayers").val(), playerCardsObj, app.players)
-  // const simplifyObj = () => {
-  //   for (let [key] of Object.entries(playerCardsObj)) {
-  //     for (let [key2] of Object.entries(playerCardsObj[key])) {
-  //       if (
-  //         key2 === "0" ||
-  //         key2 === "1" ||
-  //         key2 === "2" ||
-  //         key2 === "3" ||
-  //         key2 === "4" ||
-  //         key2 === "5" ||
-  //         key2 === "6"
-  //       ) {
-  //         continue;
-  //       }
-  //       delete playerCardsObj[key][key2];
-  //     }
-  //   }
-  // };
+  run($("#numOfPlayers").val(), playerCardsObj, app.players)
+  const simplifyObj = () => {
+    for (let [key] of Object.entries(playerCardsObj)) {
+      for (let [key2] of Object.entries(playerCardsObj[key])) {
+        if (
+          key2 === "0" ||
+          key2 === "1" ||
+          key2 === "2" ||
+          key2 === "3" ||
+          key2 === "4" ||
+          key2 === "5" ||
+          key2 === "6"
+        ) {
+          continue;
+        }
+        delete playerCardsObj[key][key2];
+      }
+    }
+  };
   // simplifyObj();
 };
+
+
+/////////////////DOM below///////////////////
 
 $(".click-to-start").mouseenter(() => {
   $(".click-to-start").css("color", "white");
@@ -858,6 +873,7 @@ let blinds = 0;
   "click",
   (repeatFuncBlinds = () => {
     let value = parseInt($("#blindValue").val());
+    app.blindSize=value
     if (value && value <= 1000 && value >= 1) {
       blinds = $("#blindValue").val();
     } else {
@@ -912,6 +928,8 @@ const createPlayerPage=(player)=>{
   $(`[id="${player}Page"]>h1`).text(player)
   $(`[id="${player}globalStats"]`).append($("<p>").addClass("potSize"))
   $(`[id="${player}globalStats"]`).append($("<p>").addClass("betSize"))
+  $(`[id="${player}globalStats"]`).append($("<p>").addClass("playerPreviousBet"))
+  $(".showStackSize").append($("<h2>").text(`${player}: $${app.playerStats[player].stack}`).attr("id",`${player}stack`))
 
   $(`[id="${player}communityCards"]`).append($("<p>").addClass("community").text(playerCardsObj["Community Cards"].slice(0,0)))
   $(`[id="${player}playersCards"]>.hidden`).append($("<p>").text(playerCardsObj[player].slice(0,2)))
@@ -955,19 +973,22 @@ const superFunc = (e) => {
     createPlayerPage(players)
   }
   
+  
   gameOn(index1);
   
-  $(".showResult").on("click",()=>{
-    result();
-  })
+  // $(".showResult").on("click",()=>{
+  //   result();
+  // })
 };
 $("#putOnYourPokerFace").on("click", superFunc)
 
 const gameOn=(index1)=>{
   let player=app.players[index1];
   $(".potSize").text(`Pot Size = $${app.pot}`)
-  $(".betSize").text(`Previous Bet = $${app.betSize}`)
-
+  $(".betSize").text(`Current Bet = $${app.betSize}`)
+  $(".playerPreviousBet").text(`Previous Bet = $${app.playerStats[player].previousBet}`)
+  $(".showStackSize").css("display","flex")
+  $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
   if(!turnEnd()){
     setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
   }
@@ -977,22 +998,29 @@ const gameOn=(index1)=>{
 
   
 const callFunc=(e,player)=>{
-  $(`[id="${player}Page"]`).hide("slow")
-  
-  app.playerStats[app.players[index1]].stack-=(app.betSize-app.playerStats[app.players[index1]].previousBet)
-  app.pot+=(app.betSize-app.playerStats[app.players[index1]].previousBet)
-  console.log(app.playerStats)
-  
-  index1++;
-  app.playerStats[player].needToAct=false
-    if (index1===parseInt(app.numOfPlayers)){
-      index1 = 0;
-    }
+    if(app.playerStats[player].stack>=app.betSize){
+    $(`[id="${player}Page"]`).hide("slow")
     
-    let gameEnded=turnEnd();
-    if(!gameEnded){
-      gameOn(index1);
-    };
+    app.playerStats[app.players[index1]].stack-=(app.betSize-app.playerStats[app.players[index1]].previousBet)
+    app.pot+=(app.betSize-app.playerStats[app.players[index1]].previousBet)
+    console.log(app.playerStats)
+    
+    index1++;
+    app.playerStats[player].needToAct=false
+      if (index1===parseInt(app.numOfPlayers)){
+        index1 = 0;
+      }
+      
+      let gameEnded=turnEnd();
+      if(!gameEnded){
+        $(".showStackSize").css("display","flex")
+        $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
+        gameOn(index1);
+      };
+    } else {
+      app.pot+=app.playerStats[app.players[index1]].stack
+      app.playerStats[app.players[index1]].stack=0
+    }
   }
   
   const foldFunc=(e,player)=>{
@@ -1011,13 +1039,16 @@ const callFunc=(e,player)=>{
   
   let gameEnded=turnEnd();
     if(!gameEnded){
+      $(".showStackSize").css("display","flex")
+      $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
       gameOn(index1);
     }
 }
 
 const raiseFunc=(e,player)=>{
     let bet=parseInt($(`[id="${player}PageRaiseAmt"]`).val());
-      if (bet && bet >= 2*app.betSize) {
+    if(bet<=app.playerStats[player].stack){
+      if (bet && bet >= 2*app.betSize && bet>=app.blindSize) {
         app.playerStats[app.players[index1]].previousBet=bet
         app.betSize=bet
         app.playerStats[app.players[index1]].stack-=app.betSize
@@ -1026,8 +1057,8 @@ const raiseFunc=(e,player)=>{
         $(`[id="${player}PageRaiseAmt"]`).val('')
       } else {
         alert("Wrong input in field or bet is too small \n Called previous bet")
-        $(`[id="${player}PageRaiseAmt"]`).val('')
         callFunc(e,player)
+        $(`[id="${player}PageRaiseAmt"]`).val('')
         return;
       }
 
@@ -1041,30 +1072,23 @@ const raiseFunc=(e,player)=>{
       }
     }
     
-    
     index1++;
     if (index1===parseInt(app.numOfPlayers)){
       index1 =0;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
+    $(".showStackSize").css("display","flex")
+    $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
     gameOn(index1);
+  } else {
+    alert("Bet size more than stack")
+    $(`[id="${player}PageRaiseAmt"]`).val('')
+  }
   }
   
-  const checkFunc=(e,player)=>{
-    $(`[id="${player}Page"]`).hide("slow")
-  
+const checkFunc=(e,player)=>{
+    
+    if(app.betSize===0){
+      $(`[id="${player}Page"]`).hide("slow")
     index1++;
     app.playerStats[player].needToAct=false
     if (index1===parseInt(app.numOfPlayers)){
@@ -1073,8 +1097,12 @@ const raiseFunc=(e,player)=>{
     
     let gameEnded=turnEnd();
     if(!gameEnded){
+      $(".showStackSize").css("display","flex")
+      $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
       gameOn(index1);
     }
+  }
+  else {alert("Please match bet size")}
   }
 
 const waitChecker=()=>{
@@ -1092,11 +1120,17 @@ const turnEnd=()=>{
   if(!waitChecker()){
     if(app.players.length===1){
       result(true)
+      for(let player of Object.keys(app.players)){
+        $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
+      }
       return true
     }else if(sequenceCounter === 3){
+      console.log("running")
       result(false)
       return true
-      // $(".playerPages").hide()
+      for(let player of Object.keys(app.players)){
+        $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`)
+      }
     }
     ++sequenceCounter
     app.gameStage=gameSequence[sequenceCounter];
