@@ -330,7 +330,7 @@ const run = (players, playerCardsObj, playerNames) => {
   pairTripsQuads();
 }
 
-const result=()=>{
+const result=(onlyWinner)=>{
   const cardRanking = {
     highCard: 1,
     onePair: 2,
@@ -409,8 +409,19 @@ const result=()=>{
           .css("background", "white")
       );
       return conflictKeys;
+    } else if(onlyWinner){
+      // console.log(`${bestPlayer} wins!`);
+      console.log(playerCardsObj)
+      $("div.result").append(
+        $("<h3>")
+          .text(
+            `${bestPlayer} won!`
+          )
+          .css("background", "white")
+      );
     } else if(counter===1){
-      console.log(`${bestPlayer} wins!`);
+      // console.log(`${bestPlayer} wins!`);
+      console.log(playerCardsObj)
       $("div.result").append(
         $("<h3>")
           .text(
@@ -489,7 +500,7 @@ const result=()=>{
     if (winner === "draw") {
       console.log(`Its a draw`);
     } else {
-      console.log(`Winner is ${winner}`);
+      // console.log(`Winner is ${winner}`);
       return winner;
     }
   }
@@ -535,7 +546,7 @@ const result=()=>{
       }
     }
 
-    console.log(highestKey);
+    // console.log(highestKey);
     // console.log(maxSameNumCards, counter);
     return [maxSameNumCards, counter];
   };
@@ -724,8 +735,10 @@ const result=()=>{
   const printer = (winner) => {
     if (winner!=undefined && winner !== "draw") {
       $("div.result").append($("<h3>").text(`${winner} won!`))
+      console.log(playerCardsObj)
     } else {
       $("div.result").append($("<h3>").text(`It's a draw!`))
+      console.log(playerCardsObj)
     }
   };
 
@@ -763,11 +776,11 @@ const result=()=>{
     // console.log(drawArr)
   }
   $("div.playerPages").hide()
-  for (var variableKey in playerCardsObj){
-    if (playerCardsObj.hasOwnProperty(variableKey)){
-        delete playerCardsObj[variableKey];
-    }
-  }
+  // for (let variableKey in playerCardsObj){
+  //   if (playerCardsObj.hasOwnProperty(variableKey)){
+  //       delete playerCardsObj[variableKey];
+  //   }
+  // }
 $(".result").show()
 
   // run($("#numOfPlayers").val(), playerCardsObj, app.players)
@@ -912,6 +925,7 @@ let playerCardsObj = {};
 var index1=2;
 const gameSequence=["Pre-Flop","Flop","Turn","River"]
 var sequenceCounter=0;
+// var sequenceCounter=3;
 // var dataGlobal;
 
 const superFunc = (e) => {
@@ -949,7 +963,7 @@ $("#putOnYourPokerFace").on("click", superFunc)
 
 const gameOn=(index1)=>{
   let player=app.players[index1];
-  if(!gameEnd()){
+  if(!turnEnd()){
     setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
   }
   $(`[id="${player}playersCards"]`).on("mousedown",()=>{$(".hidden").show()})
@@ -966,8 +980,10 @@ const callFunc=(e,player)=>{
       index1 = 0;
     }
     
-    gameEnd()
-    gameOn(index1);
+    let gameEnded=turnEnd();
+    if(!gameEnded){
+      gameOn(index1);
+    };
   }
   
   const foldFunc=(e,player)=>{
@@ -978,11 +994,16 @@ const callFunc=(e,player)=>{
       app.players.splice(index1,1)
       app.numOfPlayers=parseInt(app.numOfPlayers)-1
       if (index1===app.numOfPlayers){
-    index1 =0;
-  }
+      index1 =0;
+    }
+    if(app.players.length===1){
+      app.playerStats[app.players[index1]].needToAct=false;
+    }
   
-  gameEnd()
-  gameOn(index1);
+  let gameEnded=turnEnd();
+    if(!gameEnded){
+      gameOn(index1);
+    }
 }
 
 const raiseFunc=(e,player)=>{
@@ -1013,8 +1034,10 @@ const raiseFunc=(e,player)=>{
       index1 = 0;
     }
     
-    gameEnd()
-    gameOn(index1);
+    let gameEnded=turnEnd();
+    if(!gameEnded){
+      gameOn(index1);
+    }
   }
 
 const waitChecker=()=>{
@@ -1028,10 +1051,13 @@ const waitChecker=()=>{
   return checker;
 }
 
-const gameEnd=()=>{
+const turnEnd=()=>{
   if(!waitChecker()){
-    if(sequenceCounter === 3||app.players.length===1){
-      result()
+    if(app.players.length===1){
+      result(true)
+      return true
+    }else if(sequenceCounter === 3){
+      result(false)
       return true
       // $(".playerPages").hide()
     }
