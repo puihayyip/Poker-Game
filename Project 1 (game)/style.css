@@ -12,8 +12,12 @@ body {
 .result {
   font-size: 5em;
   background-color: white;
-  margin: 0px auto;
+  margin-top: 5%;
   text-align: center;
+}
+
+.result > h3 {
+  margin-top: 40px;
 }
 
 #startpage {
@@ -43,6 +47,7 @@ body {
 h1.playersPage {
   font-size: 4em;
   font-family: "Dancing Script", cursive;
+  margin-bottom: 10px;
 }
 
 .click-to-start {
@@ -63,7 +68,7 @@ h1.playersPage {
 }
 
 .playerPages {
-  margin: 0px auto;
+  /* margin: 0px auto; */
   text-align: center;
   background-color: blanchedalmond;
 }
@@ -89,4 +94,19 @@ footer {
   bottom: 0%;
   color: white;
   cursor: default;
+}
+
+button.result {
+  background-color: grey;
+  font-size: 1rem;
+  bottom: 10%;
+}
+
+p.playersPage {
+  width: 20%;
+  background-color: white;
+  margin: auto;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 2em;
 }

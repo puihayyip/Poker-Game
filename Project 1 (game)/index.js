@@ -409,7 +409,7 @@ const result=()=>{
           .css("background", "white")
       );
       return conflictKeys;
-    } else {
+    } else if(counter===1){
       console.log(`${bestPlayer} wins!`);
       $("div.result").append(
         $("<h3>")
@@ -426,7 +426,7 @@ const result=()=>{
   // let bestHandIndex = data[0]
   // let bestPlayer = data[1]
   const conflictInfo = decider(bestHandIndex, bestPlayer);
-  console.log(playerCardsObj);
+  // console.log(playerCardsObj);
 
   function highCardDecon() {
     let winner = "draw";
@@ -768,7 +768,9 @@ const result=()=>{
         delete playerCardsObj[variableKey];
     }
   }
-  run($("#numOfPlayers").val(), playerCardsObj, app.players)
+$(".result").show()
+
+  // run($("#numOfPlayers").val(), playerCardsObj, app.players)
   // const simplifyObj = () => {
   //   for (let [key] of Object.entries(playerCardsObj)) {
   //     for (let [key2] of Object.entries(playerCardsObj[key])) {
@@ -877,6 +879,7 @@ const storeInitialData=()=>{
 const createPlayerPage=(player)=>{
   $wrapper = $("<div>").attr("id",`${player}Page`).addClass("playerPages").hide()
   $wrapper.append($("<h1>").addClass("playersPage"))
+  $wrapper.append($("<p>").addClass("playersPage").text(gameSequence[0]))
   $wrapper.append($("<div>").attr("id",`${player}communityCards`))
   $wrapper.append($("<div>").attr("id",`${player}playersCards`).addClass("hideBtn"))
   $wrapper.append($("<div>").attr("id",`${player}commandButtons`))
@@ -891,6 +894,7 @@ const createPlayerPage=(player)=>{
   $(`[id="${player}commandBtn"]`).append($("<input>").attr("type","text"))
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").attr("id",`${player}PageRaiseBtn`).text("Raise!"))
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").css("margin-left","2em").attr("id",`${player}PageCallBtn`).text("Call"))
+  $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").css("margin-left","2em").attr("id",`${player}PageCheckBtn`).text("Check"))
   $(`[id="${player}Page"]>h1`).text(player)
 
   $(`[id="${player}communityCards"]`).append($("<p>").addClass("community").text(playerCardsObj["Community Cards"].slice(0,0)))
@@ -900,12 +904,13 @@ const createPlayerPage=(player)=>{
     $(`[id="${player}PageFoldBtn"]`).on("click", (e)=>{foldFunc(e,player)})
     $(`[id="${player}PageRaiseBtn"]`).on("click", (e)=>{raiseFunc(e,player)})
     $(`[id="${player}PageCallBtn"]`).on("click", (e)=>{callFunc(e,player)})
+    $(`[id="${player}PageCheckBtn"]`).on("click", (e)=>{checkFunc(e,player)})
   }
 
 let playerCardsObj = {};
 
 var index1=2;
-const gameSequence=["pre-flop","flop","turn","river"]
+const gameSequence=["Pre-Flop","Flop","Turn","River"]
 var sequenceCounter=0;
 // var dataGlobal;
 
@@ -922,6 +927,7 @@ const superFunc = (e) => {
   
   app["playerStats"]={};
   app["gameStage"]=gameSequence[sequenceCounter];
+  app["betSize"]=0;
   for (let i=0;i<app.players.length;i++){
     let player = app.players[i]
     app.playerStats[player]={};
@@ -943,7 +949,9 @@ $("#putOnYourPokerFace").on("click", superFunc)
 
 const gameOn=(index1)=>{
   let player=app.players[index1];
-  setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
+  if(!gameEnd()){
+    setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
+  }
   $(`[id="${player}playersCards"]`).on("mousedown",()=>{$(".hidden").show()})
   $(`[id="${player}playersCards"]`).on("mouseup",()=>{$(".hidden").hide()})
 }
@@ -958,30 +966,7 @@ const callFunc=(e,player)=>{
       index1 = 0;
     }
     
-    if(!waitChecker()){
-      if(sequenceCounter === 3){
-        result()
-      }
-      ++sequenceCounter
-      app.gameStage=gameSequence[sequenceCounter];
-      index1=0;
-      for(let player of Object.keys(app.playerStats)){
-        app.playerStats[player].needToAct=true
-      }
-
-      switch(sequenceCounter){
-        case 1:
-        $(".community").text(playerCardsObj["Community Cards"].slice(0,3));
-        break;
-        case 2:
-        $(".community").text(playerCardsObj["Community Cards"].slice(0,4));
-        break;
-        case 3:
-        $(".community").text(playerCardsObj["Community Cards"]);
-        break;
-      }
-    }
-    // console.log(app.playerStats)
+    gameEnd()
     gameOn(index1);
   }
   
@@ -996,29 +981,7 @@ const callFunc=(e,player)=>{
     index1 =0;
   }
   
-  if(!waitChecker()){
-    if(sequenceCounter === 3){
-      result()
-    }
-    ++sequenceCounter
-    app.gameStage=gameSequence[sequenceCounter];
-    index1=0;
-    for(let player of Object.keys(app.playerStats)){
-      app.playerStats[player].needToAct=true
-    }
-    switch(sequenceCounter){
-      case 1:
-      $(".community").text(playerCardsObj["Community Cards"].slice(0,3));
-      break;
-      case 2:
-      $(".community").text(playerCardsObj["Community Cards"].slice(0,4));
-      break;
-      case 3:
-      $(".community").text(playerCardsObj["Community Cards"]);
-      break;
-    }
-  }
-  // console.log(app.playerStats)
+  gameEnd()
   gameOn(index1);
 }
 
@@ -1041,6 +1004,18 @@ const raiseFunc=(e,player)=>{
     gameOn(index1);
   }
   
+  const checkFunc=(e,player)=>{
+    $(`[id="${player}Page"]`).hide("slow")
+  
+    index1++;
+    app.playerStats[player].needToAct=false
+    if (index1===parseInt(app.numOfPlayers)){
+      index1 = 0;
+    }
+    
+    gameEnd()
+    gameOn(index1);
+  }
 
 const waitChecker=()=>{
   let checker=false
@@ -1050,6 +1025,44 @@ const waitChecker=()=>{
       break;
     }
   }
-  // console.log(checker)
   return checker;
 }
+
+const gameEnd=()=>{
+  if(!waitChecker()){
+    if(sequenceCounter === 3||app.players.length===1){
+      result()
+      return true
+      // $(".playerPages").hide()
+    }
+    ++sequenceCounter
+    app.gameStage=gameSequence[sequenceCounter];
+    index1=0;
+    for(let player of Object.keys(app.playerStats)){
+      app.playerStats[player].needToAct=true
+    }
+    switch(sequenceCounter){
+      case 1:
+        setTimeout(()=>{
+          $("p.playersPage").text(gameSequence[sequenceCounter])
+          $(".community").text(playerCardsObj["Community Cards"].slice(0,3))}
+          ,700)
+        break;
+      case 2:
+        setTimeout(()=>{
+          $("p.playersPage").text(gameSequence[sequenceCounter])
+          $(".community").text(playerCardsObj["Community Cards"].slice(0,4))}
+          ,700)
+        break;
+      case 3:
+        setTimeout(()=>{
+          $("p.playersPage").text(gameSequence[sequenceCounter])
+          $(".community").text(playerCardsObj["Community Cards"])}
+          ,700)
+        break;
+    }
+  }
+}
+
+$("button.result").on("mouseout",(e)=>{e.target.style.background = ''})
+$("button.result").on("mouseover",(e)=>{e.target.style.background = 'blue'})
