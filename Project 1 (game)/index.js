@@ -896,19 +896,22 @@ const createPlayerPage=(player)=>{
   $wrapper.append($("<div>").attr("id",`${player}communityCards`))
   $wrapper.append($("<div>").attr("id",`${player}playersCards`).addClass("hideBtn"))
   $wrapper.append($("<div>").attr("id",`${player}commandButtons`))
+  $wrapper.append($("<div>").attr("id",`${player}globalStats`))
   $("body").append($wrapper)
   
-  $(`[id="${player}communityCards"]`).append($("<p>").text("Community Cards"))
-  $(`[id="${player}playersCards"]`).append($("<p>").text("Players Cards"))
+  $(`[id="${player}communityCards"]`).append($("<p>").text("Community Cards").css("text-decoration","underline"))
+  $(`[id="${player}playersCards"]`).append($("<p>").text("Players Cards").css("text-decoration","underline"))
   $(`[id="${player}playersCards"]`).append($("<div>").addClass("hidden").hide())
   $(`[id="${player}commandButtons"]`).append($("<form>").attr("id",`${player}commandBtn`))
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").attr("id",`${player}PageFoldBtn`).text("Fold"))
   $(`[id="${player}commandBtn"]`).append($("<label>").attr("for","raiseAmount").css("margin-left","2em").text("Raise: $"))
-  $(`[id="${player}commandBtn"]`).append($("<input>").attr("type","text"))
+  $(`[id="${player}commandBtn"]`).append($("<input>").attr("type","text").attr("id",`${player}PageRaiseAmt`))
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").attr("id",`${player}PageRaiseBtn`).text("Raise!"))
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").css("margin-left","2em").attr("id",`${player}PageCallBtn`).text("Call"))
   $(`[id="${player}commandBtn"]`).append($("<button>").attr("type","button").css("margin-left","2em").attr("id",`${player}PageCheckBtn`).text("Check"))
   $(`[id="${player}Page"]>h1`).text(player)
+  $(`[id="${player}globalStats"]`).append($("<p>").addClass("potSize"))
+  $(`[id="${player}globalStats"]`).append($("<p>").addClass("betSize"))
 
   $(`[id="${player}communityCards"]`).append($("<p>").addClass("community").text(playerCardsObj["Community Cards"].slice(0,0)))
   $(`[id="${player}playersCards"]>.hidden`).append($("<p>").text(playerCardsObj[player].slice(0,2)))
@@ -925,14 +928,11 @@ let playerCardsObj = {};
 var index1=2;
 const gameSequence=["Pre-Flop","Flop","Turn","River"]
 var sequenceCounter=0;
-// var sequenceCounter=3;
-// var dataGlobal;
 
 const superFunc = (e) => {
   e.preventDefault();
   storeInitialData();
   run($("#numOfPlayers").val(), playerCardsObj, app.players);
-  // dataGlobal=data
   
   $("#settingPage").fadeOut("slow");
   if(parseInt(app.numOfPlayers)===2){
@@ -942,9 +942,11 @@ const superFunc = (e) => {
   app["playerStats"]={};
   app["gameStage"]=gameSequence[sequenceCounter];
   app["betSize"]=0;
+  app["pot"]=1.5*$("#blindValue").val()
   for (let i=0;i<app.players.length;i++){
     let player = app.players[i]
     app.playerStats[player]={};
+    app.playerStats[player].previousBet=0;
     app.playerStats[player].needToAct=true
     app.playerStats[player].stack=parseInt(app.playersStash[i])
   }
@@ -963,6 +965,9 @@ $("#putOnYourPokerFace").on("click", superFunc)
 
 const gameOn=(index1)=>{
   let player=app.players[index1];
+  $(".potSize").text(`Pot Size = $${app.pot}`)
+  $(".betSize").text(`Previous Bet = $${app.betSize}`)
+
   if(!turnEnd()){
     setTimeout(()=>{$(`[id="${player}Page"]`).slideDown()},500)
   }
@@ -980,6 +985,10 @@ const callFunc=(e,player)=>{
       index1 = 0;
     }
     
+    app.playerStats[app.players[index1]].stack-=(app.betSize-app.playerStats[app.players[index1]].previousBet)
+    app.pot+=(app.betSize-app.playerStats[app.players[index1]].previousBet)
+    console.log(app.playerStats)
+
     let gameEnded=turnEnd();
     if(!gameEnded){
       gameOn(index1);
@@ -997,7 +1006,7 @@ const callFunc=(e,player)=>{
       index1 =0;
     }
     if(app.players.length===1){
-      app.playerStats[app.players[index1]].needToAct=false;
+      app.playerStats[app.players[index1]].needToAct=false
     }
   
   let gameEnded=turnEnd();
@@ -1022,6 +1031,13 @@ const raiseFunc=(e,player)=>{
       index1 =0;
     }
 
+
+    app.playerStats[app.players[index1]].previousBet=parseInt($(`[id="${player}PageRaiseAmt"]`).val())
+    app.betSize=parseInt($(`[id="${player}PageRaiseAmt"]`).val())
+    app.playerStats[app.players[index1]].stack-=app.betSize
+    app.pot+=app.betSize
+    console.log(app.playerStats)
+    $(`[id="${player}PageRaiseAmt"]`).val('')
     gameOn(index1);
   }
   
@@ -1064,8 +1080,10 @@ const turnEnd=()=>{
     ++sequenceCounter
     app.gameStage=gameSequence[sequenceCounter];
     index1=0;
+    app.betSize=0
     for(let player of Object.keys(app.playerStats)){
       app.playerStats[player].needToAct=true
+      app.playerStats[player].previousBet=0
     }
     switch(sequenceCounter){
       case 1:
