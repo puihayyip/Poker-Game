@@ -865,7 +865,7 @@ const addPlayers = () => {
       .append($("<br>"));
   }
 
-  $("#putOnYourPokerFace").show();
+  $("#putOnYourPokerFace").show()
 };
 
 let blinds = 0;
