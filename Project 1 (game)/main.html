@@ -1,77 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Texas Poker NLH</title>
-    <script src="index.js" defer></script>
-    <script
-      src="https://code.jquery.com/jquery-3.6.0.min.js"
-      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-      crossorigin="anonymous"
-    ></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Rye&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <link href="http://fonts.cdnfonts.com/css/poker" rel="stylesheet" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="startpage">
-      <!-- <div id="startpage" hidden> -->
-      <h1>Texas Poker NLH</h1>
-      <div class="click-to-start">
-        <p>Click to start</p>
-      </div>
-    </div>
-
-    <div id="settingPage" hidden>
-      <!-- <div id="settingPage"> -->
-      <form class="initialInput">
-        <label for="numOfPlayers">Number of Players: </label>
-
-        <select id="numOfPlayers">
-          <!-- <option value="2">2</option> -->
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option></select
-        ><br /><br />
-
-        <label for="blindValue">Enter Big Blind Value: $</label>
-        <input type="text" id="blindValue" value="2" /><br /><br />
-        <div class="submission">
-          <input type="button" value="Submit" id="submitButton" />
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Texas Poker NLH</title>
+        <script src="index.js" defer></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="style.css" />
+        <link href="http://fonts.cdnfonts.com/css/poker" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="startpage">
+            <!-- <div id="startpage" hidden> -->
+            <h1>Texas Poker NLH</h1>
+            <div class="click-to-start">
+                <p>Click to start</p>
+            </div>
         </div>
-        <br />
-      </form>
 
-      <form class="playerDetails"></form>
-      <button id="putOnYourPokerFace" hidden>Put on Your Poker Face!</button>
-    </div>
+        <div id="settingPage" hidden>
+            <!-- <div id="settingPage"> -->
+            <form class="initialInput">
+                <label for="numOfPlayers">Number of Players: </label>
 
-    <div class="card" hidden></div>
-    <div class="result" hidden>
-      <div>
-        <button class="result">Play again</button>
-        <!-- <button class="result">Show stack size</button> -->
-      </div>
-    </div>
-    <div class="showStackSize"></div>
-    <footer>
-      <div class="showResult" hidden>Show result</div>
-    </footer>
-  </body>
+                <select id="numOfPlayers">
+                    <!-- <option value="2">2</option> -->
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option></select
+                ><br /><br />
+
+                <label for="blindValue">Enter Big Blind Value: $</label>
+                <input type="text" id="blindValue" value="2" /><br /><br />
+                <div class="submission">
+                    <input type="button" value="Submit" id="submitButton" />
+                </div>
+                <br />
+            </form>
+
+            <form class="playerDetails"></form>
+            <button id="putOnYourPokerFace" hidden>Put on Your Poker Face!</button>
+        </div>
+
+        <div class="card" hidden></div>
+        <div class="result" hidden>
+            <div>
+                <h3 class="result"></h3>
+                <button class="result">Play again</button>
+                <!-- <button class="result">Show stack size</button> -->
+            </div>
+        </div>
+        <div class="showStackSize"></div>
+        <footer>
+            <div class="showResult" hidden>Show result</div>
+        </footer>
+    </body>
 </html>

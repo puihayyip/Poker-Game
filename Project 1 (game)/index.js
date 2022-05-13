@@ -179,7 +179,6 @@ const run = (players, playerCardsObj, playerNames) => {
 
                 if (playerCardsObj[key].isFlush[0]) {
                     pushFlush(key);
-                    // console.log(`${key} has a ${playerCardsObj[key].isFlush[1]} flush!`);
                 }
             }
         }
@@ -216,11 +215,6 @@ const run = (players, playerCardsObj, playerNames) => {
                 }
             }
         }
-        // if (playerCardsObj[key].isStraight[0]) {
-        // console.log(
-        //   `${key} has a ${playerCardsObj[key].isStraight[1]} high straight!`
-        // );
-        // }
     }
 
     const pairTripsQuads = () => {
@@ -345,28 +339,22 @@ const result = (onlyWinner) => {
         }
         if (counter > 1) {
             console.log(`${conflictKeys} have the same hands`);
-            // $("div.result").append(
-            //   $("<h3>")
-            //     .text(`${conflictKeys} have the same hands`)
-            //     .css("background", "white")
-            // );
             return conflictKeys;
         } else if (onlyWinner) {
             // console.log(`${bestPlayer} wins!`);
             console.log(playerCardsObj);
-            $('div.result').append($('<h3>').text(`${bestPlayer} won!`).css('background', 'white'));
+            $('h3.result').text(`${bestPlayer} won!`).css('background', 'white').css('font-size', '0.9em');
             $('.showStackSize').css('display', 'flex');
             app.playerStats[bestPlayer].stack += app.pot;
             $(`[id="${bestPlayer}stack"]`).text(`${bestPlayer}: $${app.playerStats[bestPlayer].stack}`);
         } else if (counter === 1) {
             // console.log(`${bestPlayer} wins!`);
             console.log(playerCardsObj);
-            $('div.result').append(
-                $('<h3>')
-                    .text(`${bestPlayer} wins with a ${Object.keys(cardRanking).find((key) => cardRanking[key] === bestHandIndex)}`)
-                    .css('background', 'white')
-                    .css('font-size', '0.9em')
-            );
+            $('h3.result')
+                .text(`${bestPlayer} wins with a ${Object.keys(cardRanking).find((key) => cardRanking[key] === bestHandIndex)}`)
+                .css('background', 'white')
+                .css('font-size', '0.9em');
+
             $('.showStackSize').css('display', 'flex');
             app.playerStats[bestPlayer].stack += app.pot;
             $(`[id="${bestPlayer}stack"]`).text(`${bestPlayer}: $${app.playerStats[bestPlayer].stack}`);
@@ -671,13 +659,13 @@ const result = (onlyWinner) => {
 
     const printer = (winner) => {
         if (winner != undefined && winner !== 'draw') {
-            $('div.result').append($('<h3>').text(`${winner} won!`));
+            $('h3.result').text(`${winner} won!`);
             console.log(playerCardsObj);
             $('.showStackSize').css('display', 'flex');
             app.playerStats[winner].stack += app.pot;
             $(`[id="${winner}stack"]`).text(`${winner}: $${app.playerStats[winner].stack}`);
         } else {
-            $('div.result').append($('<h3>').text(`It's a draw!`));
+            $('h3.result').text(`It's a draw!`);
             console.log(playerCardsObj);
             $('.showStackSize').css('display', 'flex');
             $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[winner].stack}`);
@@ -717,15 +705,16 @@ const result = (onlyWinner) => {
 
         // console.log(drawArr)
     }
-    $('div.playerPages').hide();
+    $('div.playerPages').hide('slow');
     // for (let variableKey in playerCardsObj){
     //   if (playerCardsObj.hasOwnProperty(variableKey)){
     //       delete playerCardsObj[variableKey];
     //   }
     // }
+
     setTimeout(() => {
-        $('.result').show('slow');
-    }, 700);
+        $('.result').slideDown();
+    }, 500);
 
     // run($("#numOfPlayers").val(), playerCardsObj, app.players)
     const simplifyObj = () => {
@@ -813,7 +802,6 @@ const storeInitialData = () => {
             app.playersStash.push($(`#player${i}BuyIn`).val());
         }
     }
-    console.log(app);
 };
 
 const createPlayerPage = (player) => {
@@ -871,7 +859,7 @@ const superFunc = (e) => {
     run($('#numOfPlayers').val(), playerCardsObj, app.players);
 
     $('#settingPage').fadeOut('slow');
-    let blind = $('#blindValue').val();
+    let blind = parseInt($('#blindValue').val());
     app['playerStats'] = {};
     app['gameStage'] = gameSequence[sequenceCounter];
     app['betSize'] = blind;
@@ -926,73 +914,74 @@ const gameOn = (index1) => {
 };
 
 const callFunc = (e, player) => {
-    if (app.playerStats[player].stack >= app.betSize) {
+    if (app.playerStats[player].previousBet !== app.betSize) {
+        if (app.playerStats[player].stack + app.playerStats[player].previousBet >= app.betSize) {
+            $(`[id="${player}Page"]`).hide('slow');
+
+            app.playerStats[app.players[index1]].stack -= app.betSize - app.playerStats[app.players[index1]].previousBet;
+            app.pot += app.betSize - app.playerStats[app.players[index1]].previousBet;
+            app.playerStats[app.players[index1]].previousBet = app.betSize;
+
+            app.playerStats[player].needToAct = false;
+
+            index1++;
+            if (index1 === app.numOfPlayers) {
+                index1 = 0;
+            }
+            let gameEnded = turnEnd();
+            if (!gameEnded) {
+                $('.showStackSize').css('display', 'flex');
+                $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`);
+                gameOn(index1);
+            }
+        } else {
+            app.pot += app.playerStats[app.players[index1]].stack;
+            app.playerStats[app.players[index1]].stack = 0;
+        }
+    }
+};
+
+const foldFunc = (e, player) => {
+    if (app.playerStats[player].previousBet !== app.betSize) {
         $(`[id="${player}Page"]`).hide('slow');
-
-        app.playerStats[app.players[index1]].stack -= app.betSize - app.playerStats[app.players[index1]].previousBet;
-        app.pot += app.betSize - app.playerStats[app.players[index1]].previousBet;
-        app.playerStats[app.players[index1]].previousBet = app.betSize;
-        console.log(player, 'call', app, '-------------------------');
-
-        app.playerStats[player].needToAct = false;
-
-        index1++;
+        // setTimeout(() => {
+        //     $(`[id="${player}Page"]`).remove();
+        // }, 600);
+        delete playerCardsObj[player];
+        // delete app.playerStats[player];
+        app.players.splice(index1, 1);
+        app.numOfPlayers -= 1;
         if (index1 === app.numOfPlayers) {
             index1 = 0;
         }
+
+        if (app.numOfPlayer === 1) {
+            app.playerStats[player].needToAct = false;
+        }
+
         let gameEnded = turnEnd();
         if (!gameEnded) {
             $('.showStackSize').css('display', 'flex');
             $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`);
             gameOn(index1);
         }
-    } else {
-        app.pot += app.playerStats[app.players[index1]].stack;
-        app.playerStats[app.players[index1]].stack = 0;
-    }
-};
-
-const foldFunc = (e, player) => {
-    $(`[id="${player}Page"]`).hide('slow');
-    setTimeout(() => {
-        $(`[id="${player}Page"]`).remove();
-    }, 600);
-    delete playerCardsObj[player];
-    // delete app.playerStats[player];
-    app.players.splice(index1, 1);
-    app.numOfPlayers -= 1;
-    if (index1 === app.numOfPlayers) {
-        index1 = 0;
-    }
-
-    if (app.numOfPlayer === 1) {
-        app.playerStats[player].needToAct = false;
-    }
-
-    console.log(player, 'fold', app, '-------------------------');
-    let gameEnded = turnEnd();
-    if (!gameEnded) {
-        $('.showStackSize').css('display', 'flex');
-        $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`);
-        gameOn(index1);
     }
 };
 
 const raiseFunc = (e, player) => {
     let bet = parseInt($(`[id="${player}PageRaiseAmt"]`).val());
-    if (bet <= app.playerStats[player].stack) {
+    if (bet <= app.playerStats[player].stack || bet === app.playerStats[player].stack + app.playerStats[player].previousBet) {
         if (bet && bet >= 2 * app.betSize && bet >= app.blindSize) {
             app.betSize = bet;
             let raiseAmt = app.betSize - app.playerStats[app.players[index1]].previousBet;
             app.playerStats[app.players[index1]].stack -= raiseAmt;
             app.pot += raiseAmt;
             app.playerStats[app.players[index1]].previousBet = bet;
-            console.log(player, 'raise', app, '-------------------------');
             $(`[id="${player}PageRaiseAmt"]`).val('');
         } else {
-            alert('Wrong input in field or bet is too small \n Called previous bet');
-            callFunc(e, player);
+            alert('Wrong input in field or bet is too small');
             $(`[id="${player}PageRaiseAmt"]`).val('');
+            raiseFunc(e, player);
             return;
         }
 
@@ -1028,8 +1017,6 @@ const checkFunc = (e, player) => {
             index1 = 0;
         }
 
-        console.log(player, 'check', app);
-
         let gameEnded = turnEnd();
         if (!gameEnded) {
             $('.showStackSize').css('display', 'flex');
@@ -1060,15 +1047,32 @@ const turnEnd = () => {
             for (let player of app.players) {
                 $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`);
             }
+            let i = 0;
+            for (let player of Object.keys(app.playerStats)) {
+                if (player !== app.players[i]) {
+                    app.players.splice(i, 0, player);
+                }
+                app.playerStats[player].needToAct = true;
+                app.playerStats[player].previousBet = 0;
+                i++;
+            }
             return true;
         } else if (sequenceCounter === 3) {
             result(false);
             for (let player of app.players) {
                 $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`);
             }
+            let i = 0;
+            for (let player of Object.keys(app.playerStats)) {
+                if (player !== app.players[i]) {
+                    app.players.splice(i, 0, player);
+                }
+                app.playerStats[player].needToAct = true;
+                app.playerStats[player].previousBet = 0;
+                i++;
+            }
             return true;
         } else {
-            console.log(app.players[index1]);
             app.gameStage = gameSequence[sequenceCounter];
             index1 = 0;
             app.betSize = 0;
@@ -1076,6 +1080,7 @@ const turnEnd = () => {
                 app.playerStats[player].needToAct = true;
                 app.playerStats[player].previousBet = 0;
             }
+
             ++sequenceCounter;
             switch (sequenceCounter) {
                 case 1:
@@ -1105,3 +1110,49 @@ $('button.result').on('mouseout', (e) => {
     e.target.style.background = '';
 });
 // $("button.result").on("mouseover",(e)=>{e.target.style.background = 'blue'})
+$('button.result').on('click', (e) => {
+    e.preventDefault();
+    sequenceCounter = 0;
+    app.gameStage = gameSequence[sequenceCounter];
+    switch (sequenceCounter) {
+        case 0:
+            setTimeout(() => {
+                $('p.playersPage').text(gameSequence[sequenceCounter]);
+                $('.community').text('');
+            }, 700);
+            break;
+        case 1:
+            setTimeout(() => {
+                $('p.playersPage').text(gameSequence[sequenceCounter]);
+                $('.community').text(playerCardsObj['Community Cards'].slice(0, 3));
+            }, 700);
+            break;
+        case 2:
+            setTimeout(() => {
+                $('p.playersPage').text(gameSequence[sequenceCounter]);
+                $('.community').text(playerCardsObj['Community Cards'].slice(0, 4));
+            }, 700);
+            break;
+        case 3:
+            setTimeout(() => {
+                $('p.playersPage').text(gameSequence[sequenceCounter]);
+                $('.community').text(playerCardsObj['Community Cards']);
+            }, 700);
+            break;
+    }
+    let blind = parseInt($('#blindValue').val());
+    app.playerStats[app.players[0]].stack -= 0.5 * blind;
+    app.playerStats[app.players[0]].previousBet = 0.5 * blind;
+    app.playerStats[app.players[1]].stack -= blind;
+    app.playerStats[app.players[1]].previousBet = blind;
+    app['betSize'] = blind;
+    app['pot'] = 1.5 * blind;
+    app.numOfPlayers = app.players.length;
+    index1 = 2;
+    run($('#numOfPlayers').val(), playerCardsObj, app.players);
+    $('.result').hide('slow');
+    gameOn(index1);
+});
+// $('button.result').on('click', () => {
+//     console.log('clicked');
+// });
