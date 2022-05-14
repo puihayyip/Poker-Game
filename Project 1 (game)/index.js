@@ -671,7 +671,7 @@ const result = (onlyWinner) => {
             $('h3.result').text(`It's a draw!`);
             console.log(playerCardsObj);
             $('.showStackSize').css('display', 'flex');
-            $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[winner].stack}`);
+            // $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[winner].stack}`);
         }
     };
 
@@ -868,7 +868,6 @@ const starterFunc = (e) => {
     app['playerStats'] = {};
     app['gameStage'] = gameSequence[sequenceCounter];
     app['betSize'] = blind;
-    app['pot'] = 1.5 * blind;
     for (let i = 0; i < app.players.length; i++) {
         let player = app.players[i];
         app.playerStats[player] = {};
@@ -879,13 +878,16 @@ const starterFunc = (e) => {
 
     if (app.numOfPlayers === 2) {
         index1 = 1;
+        app.playerStats[app.players[0]].stack -= blind;
+        app.playerStats[app.players[0]].previousBet = blind;
+        app['pot'] = blind;
+    } else {
+        app['pot'] = 1.5 * blind;
+        app.playerStats[app.players[0]].stack -= 0.5 * blind;
+        app.playerStats[app.players[0]].previousBet = 0.5 * blind;
+        app.playerStats[app.players[1]].stack -= blind;
+        app.playerStats[app.players[1]].previousBet = blind;
     }
-
-    app.playerStats[app.players[0]].stack -= 0.5 * blind;
-    app.playerStats[app.players[0]].previousBet = 0.5 * blind;
-    app.playerStats[app.players[1]].stack -= blind;
-    app.playerStats[app.players[1]].previousBet = blind;
-
     for (let players of app.players) {
         createPlayerPage(players);
     }
@@ -1132,14 +1134,21 @@ const iterator = (e) => {
     }, 700);
 
     let blind = parseInt($('#blindValue').val());
-    app.playerStats[app.players[0]].stack -= 0.5 * blind;
-    app.playerStats[app.players[0]].previousBet = 0.5 * blind;
-    app.playerStats[app.players[1]].stack -= blind;
-    app.playerStats[app.players[1]].previousBet = blind;
     app['betSize'] = blind;
-    app['pot'] = 1.5 * blind;
+    if (app.numOfPlayers === 2) {
+        index1 = 1;
+        app.playerStats[app.players[0]].stack -= blind;
+        app.playerStats[app.players[0]].previousBet = blind;
+        app['pot'] = blind;
+    } else {
+        index1 = 2;
+        app['pot'] = 1.5 * blind;
+        app.playerStats[app.players[0]].stack -= 0.5 * blind;
+        app.playerStats[app.players[0]].previousBet = 0.5 * blind;
+        app.playerStats[app.players[1]].stack -= blind;
+        app.playerStats[app.players[1]].previousBet = blind;
+    }
     app.numOfPlayers = app.players.length;
-    index1 = 2;
     run($('#numOfPlayers').val(), playerCardsObj, app.players);
     $('.result').hide('slow');
     for (let player of app.players) {
@@ -1148,13 +1157,13 @@ const iterator = (e) => {
     gameOn(index1);
 };
 
-$('#shuffler').on('click', () => {
-    run($('#numOfPlayers').val(), playerCardsObj, app.players);
-    console.log(deck);
-    console.log(playerCardsObj);
-    for (let variableKey in playerCardsObj) {
-        if (playerCardsObj.hasOwnProperty(variableKey)) {
-            delete playerCardsObj[variableKey];
-        }
-    }
-});
+// $('#shuffler').on('click', () => {
+//     run($('#numOfPlayers').val(), playerCardsObj, app.players);
+//     console.log(deck);
+//     console.log(playerCardsObj);
+//     for (let variableKey in playerCardsObj) {
+//         if (playerCardsObj.hasOwnProperty(variableKey)) {
+//             delete playerCardsObj[variableKey];
+//         }
+//     }
+// });
