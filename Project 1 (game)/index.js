@@ -1,3 +1,6 @@
+// const { clearConfigCache } = require('prettier');
+
+let deck = []; //creating deck of card
 const run = (players, playerCardsObj, playerNames) => {
     const suits = ['♢', '♣', '♡', '♠'];
     const cardValue = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -8,7 +11,7 @@ const run = (players, playerCardsObj, playerNames) => {
         straightArr.push(cardValueStraight.slice(i, i + 5));
     }
 
-    const deck = []; //creating deck of card
+    // const deck = []; //creating deck of card
     for (let Suits of suits) {
         for (let CardValue of cardValue) {
             deck.push(CardValue + ' ' + Suits);
@@ -349,7 +352,7 @@ const result = (onlyWinner) => {
             $(`[id="${bestPlayer}stack"]`).text(`${bestPlayer}: $${app.playerStats[bestPlayer].stack}`);
         } else if (counter === 1) {
             // console.log(`${bestPlayer} wins!`);
-            console.log(playerCardsObj);
+            // console.log(playerCardsObj);
             $('h3.result')
                 .text(`${bestPlayer} wins with a ${Object.keys(cardRanking).find((key) => cardRanking[key] === bestHandIndex)}`)
                 .css('background', 'white')
@@ -705,12 +708,14 @@ const result = (onlyWinner) => {
 
         // console.log(drawArr)
     }
+
     $('div.playerPages').hide('slow');
-    // for (let variableKey in playerCardsObj){
-    //   if (playerCardsObj.hasOwnProperty(variableKey)){
-    //       delete playerCardsObj[variableKey];
-    //   }
-    // }
+    console.log(playerCardsObj);
+    for (let variableKey in playerCardsObj) {
+        if (playerCardsObj.hasOwnProperty(variableKey)) {
+            delete playerCardsObj[variableKey];
+        }
+    }
 
     setTimeout(() => {
         $('.result').slideDown();
@@ -727,10 +732,10 @@ const result = (onlyWinner) => {
             }
         }
     };
-    // simplifyObj();
+    simplifyObj();
 };
 
-/////////////////DOM below///////////////////
+/////////////////////////////////////////DOM below/////////////////////////////////////////
 
 $('.click-to-start').mouseenter(() => {
     $('.click-to-start').css('color', 'white');
@@ -853,7 +858,7 @@ var index1 = 2;
 const gameSequence = ['Pre-Flop', 'Flop', 'Turn', 'River'];
 var sequenceCounter = 0;
 
-const superFunc = (e) => {
+const starterFunc = (e) => {
     e.preventDefault();
     storeInitialData();
     run($('#numOfPlayers').val(), playerCardsObj, app.players);
@@ -891,7 +896,7 @@ const superFunc = (e) => {
     //   result();
     // })
 };
-$('#putOnYourPokerFace').on('click', superFunc);
+$('#putOnYourPokerFace').on('click', starterFunc);
 
 const gameOn = (index1) => {
     let player = app.players[index1];
@@ -1111,35 +1116,21 @@ $('button.result').on('mouseout', (e) => {
 });
 // $("button.result").on("mouseover",(e)=>{e.target.style.background = 'blue'})
 $('button.result').on('click', (e) => {
+    iterator(e);
+});
+
+const iterator = (e) => {
     e.preventDefault();
+    deck = [];
     sequenceCounter = 0;
     app.gameStage = gameSequence[sequenceCounter];
-    switch (sequenceCounter) {
-        case 0:
-            setTimeout(() => {
-                $('p.playersPage').text(gameSequence[sequenceCounter]);
-                $('.community').text('');
-            }, 700);
-            break;
-        case 1:
-            setTimeout(() => {
-                $('p.playersPage').text(gameSequence[sequenceCounter]);
-                $('.community').text(playerCardsObj['Community Cards'].slice(0, 3));
-            }, 700);
-            break;
-        case 2:
-            setTimeout(() => {
-                $('p.playersPage').text(gameSequence[sequenceCounter]);
-                $('.community').text(playerCardsObj['Community Cards'].slice(0, 4));
-            }, 700);
-            break;
-        case 3:
-            setTimeout(() => {
-                $('p.playersPage').text(gameSequence[sequenceCounter]);
-                $('.community').text(playerCardsObj['Community Cards']);
-            }, 700);
-            break;
-    }
+    // switch (sequenceCounter) {
+    //     case 0:
+    setTimeout(() => {
+        $('p.playersPage').text(gameSequence[sequenceCounter]);
+        $('.community').text('');
+    }, 700);
+
     let blind = parseInt($('#blindValue').val());
     app.playerStats[app.players[0]].stack -= 0.5 * blind;
     app.playerStats[app.players[0]].previousBet = 0.5 * blind;
@@ -1151,8 +1142,19 @@ $('button.result').on('click', (e) => {
     index1 = 2;
     run($('#numOfPlayers').val(), playerCardsObj, app.players);
     $('.result').hide('slow');
+    for (let player of app.players) {
+        $(`[id="${player}playersCards"]>.hidden`).text(playerCardsObj[player].slice(0, 2));
+    }
     gameOn(index1);
+};
+
+$('#shuffler').on('click', () => {
+    run($('#numOfPlayers').val(), playerCardsObj, app.players);
+    console.log(deck);
+    console.log(playerCardsObj);
+    for (let variableKey in playerCardsObj) {
+        if (playerCardsObj.hasOwnProperty(variableKey)) {
+            delete playerCardsObj[variableKey];
+        }
+    }
 });
-// $('button.result').on('click', () => {
-//     console.log('clicked');
-// });
