@@ -1153,7 +1153,7 @@ const turnEnd = () => {
             }
 
             if (playerIndex < 0) {
-                playerIndex = app.numOfPlayer + playerIndex;
+                playerIndex = app.numOfPlayers + playerIndex;
             }
             app.betSize = 0;
             for (let player of app.players) {
@@ -1208,16 +1208,6 @@ const iterator = (e) => {
     ++UTGIndex;
     if (UTGIndex === app.numOfPlayers) {
         UTGIndex = 0;
-    }
-
-    if (parseInt($('#numOfPlayers').val()) === 2) {
-        playerIndex = UTGIndex - 1;
-    } else {
-        playerIndex = UTGIndex - 2;
-    }
-
-    if (playerIndex < 0) {
-        playerIndex = app.numOfPlayer + playerIndex;
     }
 
     setTimeout(() => {
