@@ -832,7 +832,7 @@ const storeInitialData = () => {
 
 const createPlayerPage = (player) => {
     $wrapper = $('<div>').attr('id', `${player}Page`).addClass('playerPages').hide();
-    $wrapper.append($('<h1>').addClass('playersPage'));
+    $wrapper.append($('<div>').addClass('playersPageHead').append($('<h1>').addClass('playersPage')));
     $wrapper.append($('<p>').addClass('playersPage').text(gameSequence[0]));
     $wrapper.append($('<div>').attr('id', `${player}communityCards`));
     $wrapper.append($('<div>').attr('id', `${player}playersCards`).addClass('hideBtn'));
@@ -851,7 +851,9 @@ const createPlayerPage = (player) => {
     $(`[id="${player}commandBtn"]`).append($('<button>').attr('type', 'button').css('margin-left', '2em').attr('id', `${player}PageCallBtn`).text('Call'));
     $(`[id="${player}commandBtn"]`).append($('<button>').attr('type', 'button').css('margin-left', '2em').attr('id', `${player}PageCheckBtn`).text('Check'));
     $(`[id="${player}commandBtn"]`).append($('<button>').attr('type', 'button').css('margin-left', '2em').attr('id', `${player}AllInBtn`).text('All In!'));
-    $(`[id="${player}Page"]>h1`).text(player);
+
+    $(`[id="${player}Page"]>div>h1`).text(player);
+
     $(`[id="${player}globalStats"]`).append($('<p>').addClass('potSize'));
     $(`[id="${player}globalStats"]`).append($('<p>').addClass('betSize'));
     $(`[id="${player}globalStats"]`).append($('<p>').addClass('playerPreviousBet'));
@@ -931,13 +933,15 @@ const starterFunc = (e) => {
 $('#putOnYourPokerFace').on('click', starterFunc);
 
 const gameOn = (playerIndex) => {
-    console.log(UTGIndex, playerIndex);
     let player = app.players[playerIndex];
     $('.potSize').text(`Pot Size = $${app.pot}`);
     $('.betSize').text(`Bet Size = $${app.betSize}`);
     $('.playerPreviousBet').text(`Previous Bet = $${app.playerStats[player].previousBet}`);
     $('.showStackSize').css('display', 'flex');
     $(`[id="${player}stack"]`).text(`${player}: $${app.playerStats[player].stack}`);
+
+    $(`[id="Player 2Page"]>h1`).text($(`[id="Player 2Page"]>h1`).html() + ' (UTG)');
+
     if (!turnEnd()) {
         setTimeout(() => {
             $(`[id="${player}Page"]`).slideDown();
