@@ -100,7 +100,6 @@ footer {
 }
 
 button.result {
-    background-color: grey;
     font-size: 1rem;
     bottom: 10%;
     width: auto;
@@ -147,4 +146,15 @@ p.community .hidden > p .hideBtn {
 
 h3.result {
     font-size: 0.9rem;
+}
+
+.card {
+    margin: auto;
+    width: 40%;
+}
+
+.card > h3 {
+    margin: auto;
+    width: auto;
+    padding: 0.7rem;
 }
