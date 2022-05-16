@@ -55,3 +55,18 @@ When working on the project, I made a point to give relavent names to functions/
 
 ## Summary
 This is my first time creating a game all by myself under a tight timeline. Frankly, I underestimated the difficulty of translating the game into computer logic when it is so obvious to a human player. Luckily, I was still able to recreate this game without referencing guides for similar games online. On hindsight, it would not be such a bad idea to do so to give me more creative and new ideas to approach similar problems.
+
+
+## Post Mortem
+### Approach and Process
+1. I would analyze the game as a whole before jumping straight into crafting the logic of the rules behind the game and neglecting user interface. I had a hard time dissecting my main code into parts to be used as functions for user button inputs.
+2. I felt that I adopted a bottom-up approach to this game, building functions along the way to fit my needs. This allowed me to work without delay and not be paralysed while planning for this complex project.
+
+### Code and Code Design
+1. When accessing object keys, make sure to use consistent and logical names. Hours were spent debugging over typo mistakes as JS will create new object keys instead of throwing an error when trying to access a key that doesn't exist. I would need to identify more functions that would repeat itself so that I can DRY. Inaccurate lines of codes were implemented in different places, resulting in errors when they should've been the same. Compare starterFunc in line 891 and iterator in 1205.
+3. I created switch cases for the different types of conflict hands and filled in the function 1 by 1 afterwards. I think it is important to work top down for certain aspects of the project to prevent missing out on certain cases. Reference to gameEndActions function in line 690.
+
+### SEI Post Mortem
+1. I was resourceful in looking up different object and array methods, to avoid myself writing functions that already exists.
+2. I need to learn how to isolate and debug issues effectively. I would also need to learn how to write more robust and independent functions. Variables are currently manipulated in multiple functions, making it extremely difficult to pinpoint an error.
+3. I think the level of the course is sufficient to get our toes wet and spark enough curiosity to explore more features in the project.
