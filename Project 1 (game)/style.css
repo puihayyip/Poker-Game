@@ -103,6 +103,7 @@ button.result {
     font-size: 1rem;
     bottom: 10%;
     width: auto;
+    background-color: #afafaf
 }
 
 p.playersPage {

@@ -1197,6 +1197,7 @@ $('button.result').on('mouseout', (e) => {
 $('button.result').on('mouseover', (e) => {
     e.target.style.background = '#313131';
     e.target.style.color = 'white';
+    e.target.style.cursor = 'pointer'
 });
 $('button.result').on('click', (e) => {
     iterator(e);
