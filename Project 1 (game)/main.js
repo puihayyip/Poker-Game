@@ -804,7 +804,7 @@ $('#submitButton').on(
             blinds = $('#blindValue').val();
         } else {
             alert('Please enter the fields correctly');
-            $('#blindValue').val('');
+            $('#blindValue').val()=0;
             repeatFuncBlinds();
         }
         addPlayers();
