@@ -32,7 +32,7 @@ Each player will be assigned 2 cards, and given actions to act during his/her tu
 
 Poker is a highly technical game, akin to playing chess, requiring patience, intelligence, ability to understand your opponents' strengths and weaknesses. This is a game that depends very little on luck as one might initially believe, relying on a player's management of risk instead of dumb luck most of the time. A good poker player should be an expert in game theory, statistics, tons of guts and last but not least, have a convincing poker face!
 
-For more details on the rules of poker, please visit https://en.wikipedia.org/wiki/Texas_hold_%27em or watch an explanory video on youtube https://www.youtube.com/watch?v=pSRGErzzIo4.
+For more details on the rules of poker, please visit [Wiki](https://en.wikipedia.org/wiki/Texas_hold_%27em "link to wiki article") or watch an explanory video on [Youtube](https://www.youtube.com/watch?v=pSRGErzzIo4 "link to youtube video").
 
 ## Components of the Game
 1. Initial game setup [Timeline: 1 day]: Create 52 unique cards, shuffling it and assigning cards to players and community. Identified types of hand each player has.
